@@ -41,12 +41,6 @@ typedef struct Dirt_BufferTypeT Dirt_BufferType;
 
 typedef void    (*Dirt_Buffer_Release)(Dirt_Buffer *buffer); /* +buf */
 typedef void    (*Dirt_Buffer_Lock)(Dirt_Buffer *buffer); /* -buf */
-  char *buf;
-  off_t pos;
-  size_t len;
-  size_t size;
-  size_t maxsize;
-
 typedef char    (*Dirt_Buffer_Advance)(Dirt_Buffer *buffer, size_t nr); /* +buf */
 typedef char    (*Dirt_Buffer_Cut)(Dirt_Buffer *buffer, char *dst, size_t nr); /* +buf */
 typedef char    (*Dirt_Buffer_Contains)(Dirt_Buffer *buffer, char *buf, size_t len, size_t at); /* +buf */
