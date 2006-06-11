@@ -39,6 +39,7 @@ typedef struct Dirt_BufferTypeT Dirt_BufferType;
    released.
 */
 
+typedef void    (*Dirt_Buffer_Free)(Dirt_Buffer *buffer); /* +buf */
 typedef void    (*Dirt_Buffer_Release)(Dirt_Buffer *buffer); /* +buf */
 typedef void    (*Dirt_Buffer_Lock)(Dirt_Buffer *buffer); /* -buf */
 typedef char    (*Dirt_Buffer_Advance)(Dirt_Buffer *buffer, size_t nr); /* +buf */
@@ -50,6 +51,8 @@ typedef char    (*Dirt_Buffer_Extend)(Dirt_Buffer *buffer, size_t nr); /* +buf *
 struct  Dirt_BufferTypeT
  {
   Dirt_Session session;
+
+  Dirt_Buffer_Free free;
 
   Dirt_Buffer_Release release;
   Dirt_Buffer_Lock lock;

@@ -1,42 +1,46 @@
-all: runBufferTest runReaderTest runStructTest runStructReaderTest
-
-.PHONY: runBufferTest
-
-runBufferTest: BufferTest
-	./BufferTest
-
-BufferTest: BufferTest.o Buffer.o BufferTypes.o Session.o
-	gcc $^ -o $@
-
-.PHONY:  runReaderTest
-
-runReaderTest: ReaderTest
-	./ReaderTest
-
-ReaderTest: ReaderTest.o Reader.o Buffer.o BufferTypes.o Session.o
-	gcc $^ -o $@
-
-.PHONY: runStructTest
-
-runStructTest: StructTest
-	./StructTest
-
-StructTest: StructTest.o Struct.o Session.o
-	gcc $^ -o $@
-
-.PHONY: runStructReaderTest
-
-runStructReaderTest: StructReaderTest
-	./StructReaderTest > StructReaderTest.output
-	diff ReaderTest.data StructReaderTest.output
-
-StructReaderTest: StructReaderTest.o StructReader.o Struct.o Reader.o Buffer.o BufferTypes.o Session.o
-	gcc $^ -o $@
+all: runBufferTest runWriteBufferTest runReaderTest runStructTest runStructReaderTest
 
 %.o: %.c
 	gcc -g -c $< -o $@
 
+Test/BufferTest: Test/BufferTest.o Buffer.o BufferTypes.o Session.o
+	gcc $^ -o $@
+
+Test/WriteBufferTest: Test/WriteBufferTest.o WriteBuffer.o WriteBufferTypes.o Session.o
+	gcc $^ -o $@
+
+Test/ReaderTest: Test/ReaderTest.o Reader.o Buffer.o BufferTypes.o Session.o
+	gcc $^ -o $@
+
+Test/StructTest: Test/StructTest.o Struct.o Session.o
+	gcc $^ -o $@
+
+Test/StructReaderTest: Test/StructReaderTest.o StructReader.o Struct.o Reader.o Buffer.o BufferTypes.o Session.o
+	gcc $^ -o $@
+
+.PHONY: runBufferTest
+.PHONY: runWriteBufferTest
+.PHONY: runReaderTest
+.PHONY: runStructTest
+.PHONY: runStructReaderTest
+
+runBufferTest: Test/BufferTest
+	cd Test; ./BufferTest
+
+runWriteBufferTest: Test/WriteBufferTest
+	cd Test; ./WriteBufferTest
+
+runReaderTest: Test/ReaderTest
+	cd Test; ./ReaderTest
+
+runStructTest: Test/StructTest
+	cd Test; ./StructTest
+
+runStructReaderTest: Test/StructReaderTest
+	cd Test; ./StructReaderTest > StructReaderTest.output
+	cd Test; diff ReaderTest.data StructReaderTest.output
+
 .PHONY: clean
 
 clean:
-	rm *Test *.output *.o *~ core*
+	rm Test/*Test Test/*.output Test/*.o Test/*~ Test/core* *.o *~ core*

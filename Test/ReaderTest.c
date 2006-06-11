@@ -67,7 +67,7 @@ int main(int argc, char argv[])
   Dirt_Reader reader;
   int fd;
 
-  if (!(fd = open("ReaderTest.data", O_RDONLY)))
+  if ((fd = open("ReaderTest.data", O_RDONLY)) < 0)
    {
     perror("Unable to open file");
     exit(1);

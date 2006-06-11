@@ -1,4 +1,5 @@
 #include "BufferImplementor.h"
+#include "Utils.h"
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -19,7 +20,7 @@ char Dirt_Buffer_Error_IO[] = "I/O error";
 
 /* Generic implementations */
 
-void Dirt_Buffer_release(Dirt_Buffer *buffer)
+void Dirt_Buffer_free(Dirt_Buffer *buffer)
  {
   free(buffer->buf);
  }

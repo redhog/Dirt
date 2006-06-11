@@ -1,9 +1,8 @@
 #include "Buffer.h"
 
 #define NEWREADER_BUFFER_MAXSIZE 8192
-#define max(x, y) (x > y ? x : y)
 
-void Dirt_Buffer_release(Dirt_Buffer *buffer);
+void Dirt_Buffer_free(Dirt_Buffer *buffer);
 char Dirt_Buffer_advance(Dirt_Buffer *buffer, size_t nr) ;
 char Dirt_Buffer_cut(Dirt_Buffer *buffer, char *dst, size_t nr);
 char Dirt_Buffer_contains(Dirt_Buffer *buffer, char *buf, size_t len, size_t at);

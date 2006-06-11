@@ -30,7 +30,7 @@ int main(int argc, char argv[])
   int fd[2];
 
   printf("Testing FileBuffer\n");
-  if (!(fd[0] = open("BufferTest.c", O_RDONLY)))
+  if ((fd[0] = open("BufferTest.c", O_RDONLY)) < 0)
    {
     Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to open file");
     exit(1);
@@ -46,10 +46,10 @@ int main(int argc, char argv[])
   assertBuffer(buffer, "ude \"");
   buffer->type->extend(buffer, 10);
   assertBuffer(buffer, "ude \"Buffe");
-  buffer->type->release(buffer);
+  buffer->type->free(buffer);
 
   printf("Testing SocketBuffer\n");
-  if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNIX, fd) != 0)
+  if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNIX, fd))
    {
     Dirt_DebugSession.type->error(&Dirt_DebugSession, "Socket", strerror(errno));
     exit(1);
@@ -73,5 +73,6 @@ int main(int argc, char argv[])
   assertBuffer(buffer, "rfien");
   buffer->type->extend(buffer, 10);
   assertBuffer(buffer, "rfienajahe");
-  buffer->type->release(buffer);
+  buffer->type->free(buffer);
+  exit(0);
  }

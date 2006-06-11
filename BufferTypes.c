@@ -1,5 +1,6 @@
 #include "BufferTypes.h"
 #include "BufferImplementor.h"
+#include "Utils.h"
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -33,6 +34,8 @@ Dirt_BufferType Dirt_StringBufferType = {
  NULL,
 
  NULL,
+
+ NULL,
  NULL,
 
  &Dirt_Buffer_advance,
@@ -47,10 +50,10 @@ Dirt_BufferType Dirt_StringBufferType = {
  FdBuffer
  ****************************************************************/
 
-void Dirt_FdBuffer_release(Dirt_Buffer *buffer)
+void Dirt_FdBuffer_free(Dirt_Buffer *buffer)
  {
   close(((Dirt_FdBuffer *) buffer)->fd);
-  Dirt_Buffer_release(buffer);
+  Dirt_Buffer_free(buffer);
  }
 
 
@@ -101,7 +104,9 @@ ssize_t Dirt_SocketBuffer_read(Dirt_Buffer *buffer, size_t nr)
 Dirt_BufferType Dirt_SocketBufferType = {
  NULL,
 
- &Dirt_FdBuffer_release,
+ &Dirt_FdBuffer_free,
+
+ NULL,
  NULL,
 
  &Dirt_Buffer_advance,
@@ -135,7 +140,9 @@ ssize_t Dirt_FileBuffer_read(Dirt_Buffer *buffer, size_t nr)
 Dirt_BufferType Dirt_FileBufferType = {
  NULL,
 
- &Dirt_FdBuffer_release,
+ &Dirt_FdBuffer_free,
+
+ NULL,
  NULL,
 
  &Dirt_Buffer_advance,
