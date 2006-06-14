@@ -23,7 +23,7 @@
 #ifndef DIRT_BUFFER_H
 #define DIRT_BUFFER_H
 
-#include "Session.h"
+#include <Dirt/Session.h>
 #include <sys/types.h>
 
 #define NEWREADER_BUFFER_MAXSIZE 8192

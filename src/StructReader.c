@@ -2,12 +2,6 @@
 #include <Dirt/Struct.h>
 #include <string.h>
 
-size_t Dirt_StructReader_unicodeLookupName(Dirt_Reader *reader, char *name, char *dst)
- { return 0; };
-
-size_t Dirt_StructReader_unicodeLookupOrdinal(Dirt_Reader *reader, int ordinal, char *dst)
- { return 0; };
-
 void  Dirt_StructReader_free(Dirt_Reader *reader, void *item) { ((Dirt_Struct *) item)->type->free(reader->buffer->session, (Dirt_Struct *) item); };
 void *Dirt_StructReader_str(Dirt_Reader *reader, char *str, size_t len) { return (void *) Dirt_Struct_str(reader->buffer->session, str, len); };
 void *Dirt_StructReader_unicodeStr(Dirt_Reader *reader, char *str, size_t len) { return (void *) Dirt_Struct_unicodeStr(reader->buffer->session, str, len); };
@@ -33,8 +27,6 @@ void *Dirt_StructReader_member(Dirt_Reader *reader, void *name, void *value) { r
 void *Dirt_StructReader_application(Dirt_Reader *reader, void *function, void *parameters) { return (void *) Dirt_Struct_application(reader->buffer->session, (Dirt_Struct *) function, (Dirt_Struct *) parameters); };
 
 Dirt_Reader_Callbacks Dirt_StructReader_Callbacks = {
- Dirt_StructReader_unicodeLookupName,
- Dirt_StructReader_unicodeLookupOrdinal,
  Dirt_StructReader_free,
  Dirt_StructReader_str,
  Dirt_StructReader_unicodeStr,

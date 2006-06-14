@@ -39,7 +39,7 @@ ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, c
        memcpy(name, reader->buffer->buf + reader->buffer->pos + namestart, namelen);
        name[namelen] = '\0';
        p++; /* skip '}' */
-       len = reader->callback->unicodeLookupName(reader, name, dst);
+       len = reader->buffer->session->type->unicodeLookupName(reader->buffer->session, name, dst);
       }
      }
      break;
@@ -52,7 +52,7 @@ ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, c
       num[4] = '\0';
       p += 4;
 
-      len = reader->callback->unicodeLookupOrdinal(reader, (int) strtol(num, NULL, 16), dst);      
+      len = reader->buffer->session->type->unicodeLookupOrdinal(reader->buffer->session, (int) strtol(num, NULL, 16), dst);      
      }
      break;
     case 'U':
@@ -64,7 +64,7 @@ ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, c
       num[8] = '\0';
       p += 8;
 
-      len = reader->callback->unicodeLookupOrdinal(reader, (int) strtol(num, NULL, 16), dst);
+      len = reader->buffer->session->type->unicodeLookupOrdinal(reader->buffer->session, (int) strtol(num, NULL, 16), dst);
      }
      break;
     default:

@@ -12,8 +12,6 @@
 int level = 0;
 #define LEAD() do { int i; for (i = level; i > 0; i--) printf(" "); } while(0)
 
-size_t ReaderTest_unicodeLookupName(Dirt_Reader *reader, char *name, char *dst)       { LEAD(); printf("UnicodeLookupName: %s\n", name); return 0; };
-size_t ReaderTest_unicodeLookupOrdinal(Dirt_Reader *reader, int ordinal, char *dst)   { LEAD(); printf("UnicodeLookupOrdinal: %i\n", ordinal); return 0; };
 void   ReaderTest_free(Dirt_Reader *reader, void *item)                               { level--; LEAD(); printf("free: %p\n", item); };
 void  *ReaderTest_str(Dirt_Reader *reader, char *str, size_t len)                     { LEAD(); printf("str: '%s'\n", str); return (void*)1; };
 void  *ReaderTest_unicodeStr(Dirt_Reader *reader, char *str, size_t len)              { LEAD(); printf("unicodeStr: '%s'\n", str); return (void*)1; };
@@ -36,8 +34,6 @@ void  *ReaderTest_member(Dirt_Reader *reader, void *name, void *value)          
 void  *ReaderTest_application(Dirt_Reader *reader, void *function, void *parameters)  { LEAD(); printf("application\n"); return (void*)1; };
 
 Dirt_Reader_Callbacks callbacks = {
- ReaderTest_unicodeLookupName,
- ReaderTest_unicodeLookupOrdinal,
  ReaderTest_free,
  ReaderTest_str,
  ReaderTest_unicodeStr,
