@@ -1,3 +1,6 @@
+#ifndef DIRT_BUFFER_IMPLEMENTOR_H
+#define DIRT_BUFFER_IMPLEMENTOR_H
+
 #include "Buffer.h"
 
 #define NEWREADER_BUFFER_MAXSIZE 8192
@@ -9,3 +12,5 @@ char Dirt_Buffer_contains(Dirt_Buffer *buffer, char *buf, size_t len, size_t at)
 char Dirt_Buffer_extend(Dirt_Buffer *buffer, size_t nr);
 
 char Dirt_Buffer_init(Dirt_Buffer *buffer, Dirt_BufferType *type, Dirt_Session *session);
+
+#endif
