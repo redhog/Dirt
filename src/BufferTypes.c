@@ -1,6 +1,6 @@
-#include "BufferTypes.h"
-#include "BufferImplementor.h"
-#include "Utils.h"
+#include <Dirt/BufferTypes.h>
+#include <Dirt/BufferImplementor.h>
+#include <Dirt/Utils.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>

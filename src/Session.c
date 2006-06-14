@@ -1,4 +1,4 @@
-#include "Session.h"
+#include <Dirt/Session.h>
 #include <stdio.h>
 
 void Dirt_DebugSession_error(Dirt_Session *session, char *class, char *error)

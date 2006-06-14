@@ -1,5 +1,5 @@
-#include "StructReader.h"
-#include "Struct.h"
+#include <Dirt/StructReader.h>
+#include <Dirt/Struct.h>
 #include <string.h>
 
 size_t Dirt_StructReader_unicodeLookupName(Dirt_Reader *reader, char *name, char *dst)

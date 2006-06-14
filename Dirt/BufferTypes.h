@@ -1,4 +1,4 @@
-#include "Buffer.h"
+#include <Dirt/Buffer.h>
 
 char Dirt_StringBuffer_init(Dirt_Buffer *buffer, Dirt_Session *session, char *string);
 

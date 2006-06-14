@@ -1,7 +1,7 @@
-#include "StructReader.h"
-#include "Struct.h"
-#include "Reader.h"
-#include "BufferTypes.h"
+#include <Dirt/StructReader.h>
+#include <Dirt/Struct.h>
+#include <Dirt/Reader.h>
+#include <Dirt/BufferTypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

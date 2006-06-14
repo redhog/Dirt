@@ -1,7 +1,7 @@
 #ifndef DIRT_STRUCT_H
 #define DIRT_STRUCT_H
 
-#include "Session.h"
+#include <Dirt/Session.h>
 #include <string.h>
 
 typedef struct Dirt_StructT Dirt_Struct;

@@ -1,46 +1,33 @@
-all: runBufferTest runWriteBufferTest runReaderTest runStructTest runStructReaderTest
+export CFLAGS:=-g
+export LIBS:=
+CC=gcc
 
-%.o: %.c
-	gcc -g -c $< -o $@
+MAJOR:=$(shell tla tree-version | sed -e "s+.*--.*--++g")
+MINOR:=$(shell tla logs -r | head -1 | sed -e "s+.*-++g")
 
-Test/BufferTest: Test/BufferTest.o Buffer.o BufferTypes.o Session.o
-	gcc $^ -o $@
 
-Test/WriteBufferTest: Test/WriteBufferTest.o WriteBuffer.o WriteBufferTypes.o Session.o
-	gcc $^ -o $@
+all: libDirt.so.$(MAJOR).$(MINOR) test
 
-Test/ReaderTest: Test/ReaderTest.o Reader.o Buffer.o BufferTypes.o Session.o
-	gcc $^ -o $@
+%.o: src/%.c
+	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
 
-Test/StructTest: Test/StructTest.o Struct.o Session.o
-	gcc $^ -o $@
+libDirt.so.$(MAJOR).$(MINOR): StructReader.o Struct.o Reader.o WriteBuffer.o WriteBufferTypes.o Buffer.o BufferTypes.o Session.o
+	$(CC) $(CFLAGS) $(LIBS) -fPIC -shared -Wl,-soname,libDirt.so.0.1 -o $@ $^
 
-Test/StructReaderTest: Test/StructReaderTest.o StructReader.o Struct.o Reader.o Buffer.o BufferTypes.o Session.o
-	gcc $^ -o $@
+libDirt.so.$(MAJOR): libDirt.so.$(MAJOR).$(MINOR)
+	ln -s $< $@
 
-.PHONY: runBufferTest
-.PHONY: runWriteBufferTest
-.PHONY: runReaderTest
-.PHONY: runStructTest
-.PHONY: runStructReaderTest
-
-runBufferTest: Test/BufferTest
-	cd Test; ./BufferTest
-
-runWriteBufferTest: Test/WriteBufferTest
-	cd Test; ./WriteBufferTest
-
-runReaderTest: Test/ReaderTest
-	cd Test; ./ReaderTest
-
-runStructTest: Test/StructTest
-	cd Test; ./StructTest
-
-runStructReaderTest: Test/StructReaderTest
-	cd Test; ./StructReaderTest > StructReaderTest.output
-	cd Test; diff ReaderTest.data StructReaderTest.output
+libDirt.so: libDirt.so.$(MAJOR)
+	ln -s $< $@
 
 .PHONY: clean
+clean: test-clean
+	-rm *.so.* *.so *.o *~ core* src/*~ Dirt/*~
 
-clean:
-	rm Test/*Test Test/*.output Test/*.o Test/*~ Test/core* *.o *~ core*
+.PHONY: test
+test: libDirt.so
+	make -C Test
+
+.PHONY: test-clean
+test-clean:
+	make -C Test clean

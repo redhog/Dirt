@@ -1,5 +1,5 @@
-#include "WriteBuffer.h"
-#include "WriteBufferTypes.h"
+#include <Dirt/WriteBuffer.h>
+#include <Dirt/WriteBufferTypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

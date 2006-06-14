@@ -1,4 +1,4 @@
-#include "WriteBuffer.h"
+#include <Dirt/WriteBuffer.h>
 
 #define NEWREADER_WRITE_BUFFER_MAXSIZE 8192
 

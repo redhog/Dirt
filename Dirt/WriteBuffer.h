@@ -24,7 +24,7 @@
 #ifndef DIRT_WRITE_BUFFER_H
 #define DIRT_WRITE_BUFFER_H
 
-#include "Session.h"
+#include <Dirt/Session.h>
 #include <sys/types.h>
 
 #define NEWREADER_WRITE_BUFFER_MAXSIZE 8192

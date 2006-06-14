@@ -1,5 +1,5 @@
-#include "Buffer.h"
-#include "BufferTypes.h"
+#include <Dirt/Buffer.h>
+#include <Dirt/BufferTypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -41,11 +41,11 @@ int main(int argc, char argv[])
     exit(1);
    }
   buffer->type->extend(buffer, 10);
-  assertBuffer(buffer, "#include \"");
+  assertBuffer(buffer, "#include <");
   buffer->type->advance(buffer, 5);
-  assertBuffer(buffer, "ude \"");
+  assertBuffer(buffer, "ude <");
   buffer->type->extend(buffer, 10);
-  assertBuffer(buffer, "ude \"Buffe");
+  assertBuffer(buffer, "ude <Dirt/");
   buffer->type->free(buffer);
 
   printf("Testing SocketBuffer\n");

@@ -1,4 +1,4 @@
-#include "WriteBuffer.h"
+#include <Dirt/WriteBuffer.h>
 
 char Dirt_StringWriteBuffer_init(Dirt_WriteBuffer *buffer, Dirt_Session *session);
 

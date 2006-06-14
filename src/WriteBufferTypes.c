@@ -1,6 +1,6 @@
-#include "WriteBufferImplementor.h"
-#include "WriteBufferTypes.h"
-#include "Utils.h"
+#include <Dirt/WriteBufferImplementor.h>
+#include <Dirt/WriteBufferTypes.h>
+#include <Dirt/Utils.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -1,4 +1,4 @@
-#include "Buffer.h"
+#include <Dirt/Buffer.h>
 #ifndef DIRT_READER
 #define DIRT_READER
 
