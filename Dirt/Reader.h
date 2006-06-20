@@ -1,6 +1,6 @@
-#include <Dirt/Buffer.h>
 #ifndef DIRT_READER
 #define DIRT_READER
+#include <Dirt/Buffer.h>
 
 typedef struct Dirt_ReaderT Dirt_Reader;
 

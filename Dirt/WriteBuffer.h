@@ -27,7 +27,7 @@
 #include <Dirt/Session.h>
 #include <sys/types.h>
 
-#define NEWREADER_WRITE_BUFFER_MAXSIZE 8192
+#define DIRT_WRITE_BUFFER_NEW_MAXSIZE 8192
 
 extern char Dirt_WriteBuffer_Error_IO[];
 

@@ -69,7 +69,7 @@ char Dirt_WriteBuffer_extend(Dirt_WriteBuffer *buffer, size_t nr)
 
 char Dirt_WriteBuffer_init(Dirt_WriteBuffer *buffer, Dirt_WriteBufferType *type, Dirt_Session *session)
  {
-  uint maxsize = NEWREADER_WRITE_BUFFER_MAXSIZE;
+  uint maxsize = DIRT_WRITE_BUFFER_NEW_MAXSIZE;
 # ifdef DEBUG_ALLOC
    fprintf(stderr, "Init: %p\n", (void *) buffer);
 # endif
