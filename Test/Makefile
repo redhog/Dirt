@@ -51,7 +51,7 @@ runStructReaderTest: StructReaderTest
 
 runWriterTest: WriterTest
 	./WriterTest
-	cat WriterTest.output
+	chmod u+wr WriterTest.output
 	diff WriterTest.data WriterTest.output
 
 .PHONY: clean
