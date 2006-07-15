@@ -11,7 +11,7 @@ all: libDirt.so.$(MAJOR).$(MINOR) test
 %.o: src/%.c
 	$(CC) $(CFLAGS) $(LIBS) -c $< -o $@
 
-libDirt.so.$(MAJOR).$(MINOR): StructReader.o Struct.o Reader.o WriteBuffer.o WriteBufferTypes.o Buffer.o BufferTypes.o Session.o
+libDirt.so.$(MAJOR).$(MINOR): Writer.o StructReader.o Struct.o Reader.o WriteBuffer.o WriteBufferTypes.o Buffer.o BufferTypes.o Session.o
 	$(CC) $(CFLAGS) $(LIBS) -fPIC -shared -Wl,-soname,libDirt.so.0.1 -o $@ $^
 
 libDirt.so.$(MAJOR): libDirt.so.$(MAJOR).$(MINOR)

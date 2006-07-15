@@ -71,13 +71,11 @@ char Dirt_FdWriteBuffer_write(Dirt_WriteBuffer *buffer, size_t nr)
   ssize_t res;
   size_t endpos = min(buffer->wpos + nr, buffer->pos);
   
-  printf("Writing %i bytes from %i\n", endpos - buffer->wpos, buffer->wpos);
   while (   endpos - buffer->wpos
 	 && (res = write(((Dirt_FdWriteBuffer *) buffer)->fd,
 			 buffer->buf + buffer->wpos,
 			 endpos - buffer->wpos)) > 0)
    buffer->wpos += res;
-  printf("%i bytes left\n", endpos - buffer->wpos);
   if (endpos - buffer->wpos)
    {
     /* #### fixme ####
