@@ -11,18 +11,20 @@
 
 int listlen = 1;
 
+char  WriterTest_write(Dirt_Writer *writer, void *any) { listlen *= 2; return writer->type->num_int(writer, listlen); };
 void *WriterTest_structure_begin(Dirt_Writer *writer, void *structure) { return (void *) 1; };
 char  WriterTest_structure_end(Dirt_Writer *writer, void *iter) { return listlen >= 10000; };
-char  WriterTest_structure_writeNext(Dirt_Writer *writer, void *iter) { listlen *= 2; return writer->type->num_int(writer, listlen); };
-char  WriterTest_keyvalue_writeKey(Dirt_Writer *writer, void *keyvalue) { return 0; };
-char  WriterTest_keyvalue_writeValue(Dirt_Writer *writer, void *keyvalue) { return 0; };
+void *WriterTest_structure_next(Dirt_Writer *writer, void *iter) { return (void *) 1; };
+void *WriterTest_keyvalue_key(Dirt_Writer *writer, void *keyvalue) { return 0; };
+void *WriterTest_keyvalue_value(Dirt_Writer *writer, void *keyvalue) { return 0; };
 
 Dirt_Writer_Callbacks callbacks = {
+ WriterTest_write,
  WriterTest_structure_begin,
  WriterTest_structure_end,
- WriterTest_structure_writeNext,
- WriterTest_keyvalue_writeKey,
- WriterTest_keyvalue_writeValue
+ WriterTest_structure_next,
+ WriterTest_keyvalue_key,
+ WriterTest_keyvalue_value
 };
 
 int main(int argc, char argv[])

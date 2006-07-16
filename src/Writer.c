@@ -18,7 +18,7 @@ char Dirt_Writer_writeStructure(Dirt_Writer *writer, void *structure)
   if (!(iter = writer->callback->structure_begin(writer, structure))) return 0;
   while (!writer->callback->structure_end(writer, iter))
    {
-    if (!writer->callback->structure_writeNext(writer, iter)) return 0;
+    if (!writer->callback->write(writer, writer->callback->structure_next(writer, iter))) return 0;
     if (!Dirt_Writer_writeBytes(writer, ", ", sizeof(", ") - 1)) return 0;
    }
   return 1;
@@ -191,33 +191,33 @@ char Dirt_Writer_structure_type(Dirt_Writer *writer, void *structure)
 
 char Dirt_Writer_keyvalue(Dirt_Writer *writer, void *keyvalue)
  {
-  if (!writer->callback->keyvalue_writeKey(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_key(writer, keyvalue))) return 0;
   if (!Dirt_Writer_writeBytes(writer, ": ", sizeof(": ") - 1)) return 0;
-  if (!writer->callback->keyvalue_writeValue(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_value(writer, keyvalue))) return 0;
   return 1;
  }
 
 char Dirt_Writer_parameter(Dirt_Writer *writer, void *keyvalue)
  {
-  if (!writer->callback->keyvalue_writeKey(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_key(writer, keyvalue))) return 0;
   if (!Dirt_Writer_writeBytes(writer, " = ", sizeof(" = ") - 1)) return 0;
-  if (!writer->callback->keyvalue_writeValue(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_value(writer, keyvalue))) return 0;
   return 1;
  }
 
 char Dirt_Writer_member(Dirt_Writer *writer, void *keyvalue)
  {
-  if (!writer->callback->keyvalue_writeKey(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_key(writer, keyvalue))) return 0;
   if (!Dirt_Writer_writeBytes(writer, ".", sizeof(".") - 1)) return 0;
-  if (!writer->callback->keyvalue_writeValue(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_value(writer, keyvalue))) return 0;
   return 1;
  }
 
 char Dirt_Writer_application(Dirt_Writer *writer, void *keyvalue)
  {
-  if (!writer->callback->keyvalue_writeKey(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_key(writer, keyvalue))) return 0;
   if (!Dirt_Writer_writeBytes(writer, "(", sizeof("(") - 1)) return 0;
-  if (!writer->callback->keyvalue_writeValue(writer, keyvalue)) return 0;
+  if (!writer->callback->write(writer, writer->callback->keyvalue_value(writer, keyvalue))) return 0;
   if (!Dirt_Writer_writeBytes(writer, ")", sizeof(")") - 1)) return 0;
   return 1;
  }
