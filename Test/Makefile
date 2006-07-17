@@ -3,7 +3,7 @@ export LIBS:=-L../ -lDirt
 export CC:=gcc
 export LD_LIBRARY_PATH:=$(shell cd ..; pwd)
 
-all: runBufferTest runWriteBufferTest runReaderTest runStructTest runStructReaderTest runWriterTest
+all: runBufferTest runWriteBufferTest runReaderTest runStructTest runStructReaderTest runWriterTest runStructWriterTest
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -26,12 +26,16 @@ StructReaderTest: StructReaderTest.o
 WriterTest: WriterTest.o
 	$(CC) $(CFLAGS) $(LIBS) $< -o $@
 
+StructWriterTest: StructWriterTest.o
+	$(CC) $(CFLAGS) $(LIBS) $< -o $@
+
 .PHONY: runBufferTest
 .PHONY: runWriteBufferTest
 .PHONY: runReaderTest
 .PHONY: runStructTest
 .PHONY: runStructReaderTest
 .PHONY: runWriterTest
+.PHONY: runStructWriterTest
 
 runBufferTest: BufferTest
 	./BufferTest
@@ -53,6 +57,11 @@ runWriterTest: WriterTest
 	./WriterTest
 	chmod u+wr WriterTest.output
 	diff WriterTest.data WriterTest.output
+
+runStructWriterTest: StructWriterTest
+	./StructWriterTest
+	chmod u+wr StructWriterTest.output
+	diff StructWriterTest.data StructWriterTest.output
 
 .PHONY: clean
 

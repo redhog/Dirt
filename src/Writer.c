@@ -15,12 +15,15 @@ char Dirt_Writer_writeStructure(Dirt_Writer *writer, void *structure)
  {
   void *iter;
   
-  if (!(iter = writer->callback->structure_begin(writer, structure))) return 0;
+  if (!(iter = writer->callback->structure_open(writer, structure))) return 0;
   while (!writer->callback->structure_end(writer, iter))
-   {
-    if (!writer->callback->write(writer, writer->callback->structure_next(writer, iter))) return 0;
-    if (!Dirt_Writer_writeBytes(writer, ", ", sizeof(", ") - 1)) return 0;
-   }
+   if (   !writer->callback->write(writer, writer->callback->structure_next(writer, iter))
+       || !Dirt_Writer_writeBytes(writer, ", ", sizeof(", ") - 1))
+    {
+     writer->callback->structure_close(writer, iter);
+     return 0;
+    }
+  writer->callback->structure_close(writer, iter);
   return 1;
  }
 

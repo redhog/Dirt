@@ -5,17 +5,19 @@
 typedef struct Dirt_WriterT Dirt_Writer;
 
 typedef char  (*Dirt_Writer_Write)(Dirt_Writer *writer, void *any);
-typedef void *(*Dirt_Writer_Structure_Begin)(Dirt_Writer *writer, void *structure);
+typedef void *(*Dirt_Writer_Structure_Open)(Dirt_Writer *writer, void *structure);
 typedef char  (*Dirt_Writer_Structure_End)(Dirt_Writer *writer, void *iter);
 typedef void *(*Dirt_Writer_Structure_Next)(Dirt_Writer *writer, void *iter);
+typedef void  (*Dirt_Writer_Structure_Close)(Dirt_Writer *writer, void *iter);
 typedef void *(*Dirt_Writer_Keyvalue_Key)(Dirt_Writer *writer, void *keyvalue);
 typedef void *(*Dirt_Writer_Keyvalue_Value)(Dirt_Writer *writer, void *keyvalue);
 
 typedef struct {
  Dirt_Writer_Write write;
- Dirt_Writer_Structure_Begin structure_begin;
+ Dirt_Writer_Structure_Open structure_open;
  Dirt_Writer_Structure_End structure_end;
  Dirt_Writer_Structure_Next structure_next;
+ Dirt_Writer_Structure_Close structure_close;
  Dirt_Writer_Keyvalue_Key keyvalue_key;
  Dirt_Writer_Keyvalue_Value keyvalue_value;
 } Dirt_Writer_Callbacks;
