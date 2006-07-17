@@ -72,6 +72,17 @@ int main(int argc, char argv[])
     Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to write data");
     exit(1);
    }
+  if (!outbuffer->type->extend(outbuffer, 1))
+   {
+    Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to write newline at end of data (extend)");
+    exit(1);
+   }
+  outbuffer->buf[outbuffer->pos] = '\n';
+  if (!outbuffer->type->advance(outbuffer, 1))
+   {
+    Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to write newline at end of data (advance)");
+    exit(1);
+   }
   strct->type->free(&Dirt_DebugSession, strct);
   inbuffer->type->free(inbuffer);
   outbuffer->type->free(outbuffer);
