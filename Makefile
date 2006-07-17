@@ -1,6 +1,8 @@
+export INSTALLDIR=/usr/local
+
 export CFLAGS:=-g
 export LIBS:=
-CC=gcc
+export CC:=gcc
 
 MAJOR:=$(shell tla tree-version | sed -e "s+.*--.*--++g")
 MINOR:=$(shell tla logs -r | head -1 | sed -e "s+.*-++g")
@@ -31,3 +33,19 @@ test: libDirt.so
 .PHONY: test-clean
 test-clean:
 	make -C Test clean
+
+.PHONY: install-libs
+install-libs: libDirt.so libDirt.so.$(MAJOR) libDirt.so.$(MAJOR).$(MINOR)
+	cp -d $^ $(INSTALLDIR)/lib
+
+.PHONY: install-headers
+install-headers: Dirt
+	cp -dr $^ $(INSTALLDIR)/include
+
+.PHONY: install
+install: install-libs install-headers
+
+
+.PHONY: uninstall
+uninstall:
+	rm -rf $(INSTALLDIR)/lib/{libDirt.so,libDirt.so.$(MAJOR),libDirt.so.$(MAJOR).$(MINOR)} $(INSTALLDIR)/include/Dirt
