@@ -24,7 +24,7 @@ int main(int argc, char argv[])
     exit(1);
    }
 
-  strct[0]->type->free(&Dirt_DebugSession, strct[0]);
+  strct[0]->type->decref(&Dirt_DebugSession, strct[0]);
 
   exit(0);
  }

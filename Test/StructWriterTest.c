@@ -56,7 +56,7 @@ int main(int argc, char argv[])
     Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to write data");
     exit(1);
    }
-  a->type->free(&Dirt_DebugSession, a);
+  a->type->decref(&Dirt_DebugSession, a);
   buffer->type->free(buffer);
   exit(0);
  }

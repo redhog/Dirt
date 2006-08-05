@@ -6,15 +6,22 @@
 
 typedef struct Dirt_StructT Dirt_Struct;
 
+typedef void (*Dirt_Struct_Decref)(Dirt_Session *session, Dirt_Struct *item);
+typedef Dirt_Struct *(*Dirt_Struct_Incref)(Dirt_Session *session, Dirt_Struct *item);
 typedef void (*Dirt_Struct_Free)(Dirt_Session *session, Dirt_Struct *item);
+typedef Dirt_Struct *(*Dirt_Struct_Restrict)(Dirt_Session *session, Dirt_Struct *item);
 
 typedef struct {
- Dirt_Struct_Free free;
  size_t size;
+ Dirt_Struct_Decref decref;
+ Dirt_Struct_Incref incref;
+ Dirt_Struct_Free free;
+ Dirt_Struct_Restrict restrict;
 } Dirt_StructType;
 
 struct Dirt_StructT {
  Dirt_StructType *type;
+ int references;
 };
 
 typedef struct {

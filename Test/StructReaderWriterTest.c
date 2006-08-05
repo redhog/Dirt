@@ -83,7 +83,7 @@ int main(int argc, char argv[])
     Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to write newline at end of data (advance)");
     exit(1);
    }
-  strct->type->free(&Dirt_DebugSession, strct);
+  strct->type->decref(&Dirt_DebugSession, strct);
   inbuffer->type->free(inbuffer);
   outbuffer->type->free(outbuffer);
   exit(0);

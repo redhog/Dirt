@@ -2,6 +2,18 @@
 #include <string.h>
 #include <stdlib.h>
 
+void Dirt_Struct_decref(Dirt_Session *session, Dirt_Struct *item)
+ {
+  if (!--item->references)
+   item->type->free(session, item);
+ }
+
+Dirt_Struct *Dirt_Struct_incref(Dirt_Session *session, Dirt_Struct *item)
+ {
+  item->references++;
+  return item;
+ }
+
 void Dirt_Struct_Str_free(Dirt_Session *session, Dirt_Struct *item)
  {
   free(((Dirt_StringStruct *) item)->str);
@@ -15,40 +27,93 @@ void Dirt_Struct_Structure_free(Dirt_Session *session, Dirt_Struct *item)
  {
   size_t pos;
   for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
-   ((Dirt_StructureStruct *) item)->items[pos]->type->free(session, ((Dirt_StructureStruct *) item)->items[pos]);
+   ((Dirt_StructureStruct *) item)->items[pos]->type->decref(session, ((Dirt_StructureStruct *) item)->items[pos]);
  };
 
 void Dirt_Struct_Keyvalue_free(Dirt_Session *session, Dirt_Struct *item)
  {
-  ((Dirt_KeyvalueStruct *) item)->key->type->free(session, ((Dirt_KeyvalueStruct *) item)->key);
-  ((Dirt_KeyvalueStruct *) item)->value->type->free(session, ((Dirt_KeyvalueStruct *) item)->value);
+  ((Dirt_KeyvalueStruct *) item)->key->type->decref(session, ((Dirt_KeyvalueStruct *) item)->key);
+  ((Dirt_KeyvalueStruct *) item)->value->type->decref(session, ((Dirt_KeyvalueStruct *) item)->value);
  };
 
-Dirt_StructType Dirt_StructType_Str = { Dirt_Struct_Str_free, sizeof(Dirt_StringStruct) };
-Dirt_StructType Dirt_StructType_UnicodeStr = { Dirt_Struct_Str_free, sizeof(Dirt_StringStruct) };
-Dirt_StructType Dirt_StructType_Identifier = { Dirt_Struct_Str_free, sizeof(Dirt_StringStruct) };
-Dirt_StructType Dirt_StructType_Num_Float = { Dirt_Struct_None_free, sizeof(Dirt_FloatStruct) };
-Dirt_StructType Dirt_StructType_Num_Long = { Dirt_Struct_None_free, sizeof(Dirt_LongStruct) };
-Dirt_StructType Dirt_StructType_Num_Int = { Dirt_Struct_None_free, sizeof(Dirt_IntStruct) };
-Dirt_StructType Dirt_StructType_None = { Dirt_Struct_None_free, sizeof(Dirt_Struct) };
-Dirt_StructType Dirt_StructType_False = { Dirt_Struct_None_free, sizeof(Dirt_Struct) };
-Dirt_StructType Dirt_StructType_True = { Dirt_Struct_None_free, sizeof(Dirt_Struct) };
-Dirt_StructType Dirt_StructType_Structure = { Dirt_Struct_Structure_free, sizeof(Dirt_StructureStruct) };
-Dirt_StructType Dirt_StructType_Structure_Tuple = { Dirt_Struct_Structure_free, sizeof(Dirt_StructureStruct) };
-Dirt_StructType Dirt_StructType_Structure_List = { Dirt_Struct_Structure_free, sizeof(Dirt_StructureStruct) };
-Dirt_StructType Dirt_StructType_Structure_Dictionary = { Dirt_Struct_Structure_free, sizeof(Dirt_StructureStruct) };
-Dirt_StructType Dirt_StructType_Structure_Type = { Dirt_Struct_Structure_free, sizeof(Dirt_StructureStruct) };
-Dirt_StructType Dirt_StructType_Keyvalue = { Dirt_Struct_Keyvalue_free, sizeof(Dirt_KeyvalueStruct) };
-Dirt_StructType Dirt_StructType_Parameter = { Dirt_Struct_Keyvalue_free, sizeof(Dirt_KeyvalueStruct) };
-Dirt_StructType Dirt_StructType_Member = { Dirt_Struct_Keyvalue_free, sizeof(Dirt_KeyvalueStruct) };
-Dirt_StructType Dirt_StructType_Application = { Dirt_Struct_Keyvalue_free, sizeof(Dirt_KeyvalueStruct) };
+Dirt_Struct *Dirt_Struct_restrict(Dirt_Session *session, Dirt_Struct *item)
+ {
+  return item->type->incref(session, item);
+ }
+
+Dirt_Struct *Dirt_StructureStruct_restrict(Dirt_Session *session, Dirt_Struct *item)
+ {
+  Dirt_Struct *restrictedItems[((Dirt_StructureStruct *) item)->len];
+  char different = 0;
+  size_t pos;
+
+  for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
+   {
+    restrictedItems[pos] = ((Dirt_StructureStruct *) item)->items[pos]->type->restrict(session, ((Dirt_StructureStruct *) item)->items[pos]);
+    if (restrictedItems[pos] != ((Dirt_StructureStruct *) item)->items[pos])
+     different = 1;
+   }
+  if (different)
+   {
+    Dirt_Struct *strct;
+    strct = Dirt_Struct_structure(session);
+    for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
+     strct = Dirt_Struct_structure_add(session, strct, restrictedItems[pos]);
+    strct->type = item->type;
+    return strct;
+   }
+  else
+   {
+    for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
+     restrictedItems[pos]->type->decref(session, restrictedItems[pos]);
+    return item->type->incref(session, item);
+   }
+ }
+
+Dirt_Struct *Dirt_KeyvalueStruct_restrict(Dirt_Session *session, Dirt_Struct *item)
+ {
+  Dirt_Struct *key;
+  Dirt_Struct *value;
+
+  key = ((Dirt_KeyvalueStruct *) item)->key->type->restrict(session, ((Dirt_KeyvalueStruct *) item)->key);
+  value = ((Dirt_KeyvalueStruct *) item)->value->type->restrict(session, ((Dirt_KeyvalueStruct *) item)->value);
+
+  if (key != ((Dirt_KeyvalueStruct *) item)->key || value != ((Dirt_KeyvalueStruct *) item)->value)
+   return Dirt_Struct_keyvalue_init(session, item->type, key, value);
+  else
+   {
+    key->type->decref(session, key);
+    value->type->decref(session, value);
+    return item->type->incref(session, item);
+   }
+ }
+
+Dirt_StructType Dirt_StructType_Str = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_UnicodeStr = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_Identifier = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_Num_Float = { sizeof(Dirt_FloatStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_Num_Long = { sizeof(Dirt_LongStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_Num_Int = { sizeof(Dirt_IntStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_None = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_False = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_True = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
+Dirt_StructType Dirt_StructType_Structure = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
+Dirt_StructType Dirt_StructType_Structure_Tuple = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
+Dirt_StructType Dirt_StructType_Structure_List = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
+Dirt_StructType Dirt_StructType_Structure_Dictionary = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
+Dirt_StructType Dirt_StructType_Structure_Type = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
+Dirt_StructType Dirt_StructType_Keyvalue = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
+Dirt_StructType Dirt_StructType_Parameter = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
+Dirt_StructType Dirt_StructType_Member = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
+Dirt_StructType Dirt_StructType_Application = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
 
 
 Dirt_Struct *Dirt_Struct_init(Dirt_Session *session, Dirt_StructType *type)
  {
   Dirt_Struct *strct;
-  if (strct = malloc(type->size))
-   strct->type = type;
+  if (!(strct = malloc(type->size))) return NULL;
+  strct->type = type;
+  strct->references = 1;
   return strct;
  }
 
@@ -108,7 +173,7 @@ Dirt_Struct *Dirt_Struct_structure_add(Dirt_Session *session, Dirt_Struct *struc
   Dirt_Struct **items;
   if (!(items = realloc(strct->items, sizeof(Dirt_Struct *) * (strct->len + 1))))
    {
-    structure->type->free(session, structure);
+    structure->type->decref(session, structure);
     session->type->error(session, "Memory", "Out of memory when adding item at end of structure");
     return NULL;
    }

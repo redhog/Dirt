@@ -144,7 +144,7 @@ int main(int argc, char argv[])
   printStruct(strct);
   printf("\n");
 
-  strct->type->free(&Dirt_DebugSession, strct);
+  strct->type->decref(&Dirt_DebugSession, strct);
 
   exit(0);
  }

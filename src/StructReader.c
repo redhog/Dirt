@@ -2,7 +2,7 @@
 #include <Dirt/Struct.h>
 #include <string.h>
 
-void  Dirt_StructReader_free(Dirt_Reader *reader, void *item) { ((Dirt_Struct *) item)->type->free(reader->buffer->session, (Dirt_Struct *) item); };
+void  Dirt_StructReader_free(Dirt_Reader *reader, void *item) { ((Dirt_Struct *) item)->type->decref(reader->buffer->session, (Dirt_Struct *) item); };
 void *Dirt_StructReader_str(Dirt_Reader *reader, char *str, size_t len) { return (void *) Dirt_Struct_str(reader->buffer->session, str, len); };
 void *Dirt_StructReader_unicodeStr(Dirt_Reader *reader, char *str, size_t len) { return (void *) Dirt_Struct_unicodeStr(reader->buffer->session, str, len); };
 void *Dirt_StructReader_identifier(Dirt_Reader *reader, char *str, size_t len) { return (void *) Dirt_Struct_identifier(reader->buffer->session, str, len); };
