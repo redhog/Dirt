@@ -35,9 +35,6 @@ Dirt_BufferType Dirt_StringBufferType = {
 
  NULL,
 
- NULL,
- NULL,
-
  &Dirt_Buffer_advance,
  &Dirt_Buffer_cut,
  &Dirt_Buffer_contains,
@@ -106,9 +103,6 @@ Dirt_BufferType Dirt_SocketBufferType = {
 
  &Dirt_FdBuffer_free,
 
- NULL,
- NULL,
-
  &Dirt_Buffer_advance,
  &Dirt_Buffer_cut,
  &Dirt_Buffer_contains,
@@ -141,9 +135,6 @@ Dirt_BufferType Dirt_FileBufferType = {
  NULL,
 
  &Dirt_FdBuffer_free,
-
- NULL,
- NULL,
 
  &Dirt_Buffer_advance,
  &Dirt_Buffer_cut,

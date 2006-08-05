@@ -9,7 +9,7 @@ typedef void   (*Dirt_Session_Error)(Dirt_Session *session, char *class, char *e
 typedef size_t (*Dirt_Session_UnicodeLookupName)(Dirt_Session *session, char *name, char *dst);
 typedef size_t (*Dirt_Session_UnicodeLookupOrdinal)(Dirt_Session *session, int ordinal, char *dst);
 
-struct  Dirt_SessionTypeT
+struct Dirt_SessionTypeT
  {
   Dirt_Session_Error error;
   Dirt_Session_UnicodeLookupName unicodeLookupName;

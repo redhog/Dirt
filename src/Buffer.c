@@ -107,12 +107,6 @@ char Dirt_Buffer_init(Dirt_Buffer *buffer, Dirt_BufferType *type, Dirt_Session *
   buffer->maxsize = maxsize;
   buffer->type = type;
   buffer->session = session;
-# ifdef WITH_THREAD
-#  ifdef DEBUG_THREAD
-    buffer->interplockings = 0;
-    buffer->bufferlockings = 0;
-#  endif
-# endif
 # ifdef DEBUG_ALLOC
    fprintf(stderr, "Init done: %p\n", (void *) buffer);
 # endif
