@@ -10,46 +10,45 @@ typedef void (*Dirt_Struct_Free)(Dirt_Session *session, Dirt_Struct *item);
 
 typedef struct {
  Dirt_Struct_Free free;
+ size_t size;
 } Dirt_StructType;
-
-typedef struct {
- char *str;
- size_t len;
-} Dirt_Struct_String;
-
-typedef struct {
- Dirt_Struct **items;
- size_t len;
-} Dirt_Struct_Structure;
-
-typedef struct {
- Dirt_Struct *key;
- Dirt_Struct *value;
-} Dirt_Struct_Keyvalue;
 
 struct Dirt_StructT {
  Dirt_StructType *type;
- union {
-  Dirt_Struct_String str;
-/*Dirt_Struct_String unicodeStr; */
-/*Dirt_Struct_String identifier; */
-  float num_float;
-  long num_long;
-  int num_int;
-/*void none; */
-/*void false; */
-/*void true; */
-  Dirt_Struct_Structure structure;
-/*Dirt_Struct_Structure structure_tuple; */
-/*Dirt_Struct_Structure structure_list; */
-/*Dirt_Struct_Structure structure_dictionary; */
-/*Dirt_Struct_Structure structure_type; */
-  Dirt_Struct_Keyvalue keyvalue;
-/*Dirt_Struct_Keyvalue parameter; */
-/*Dirt_Struct_Keyvalue member; */
-/*Dirt_Struct_Keyvalue application; */
- };
 };
+
+typedef struct {
+ Dirt_Struct base;
+ char *str;
+ size_t len;
+} Dirt_StringStruct;
+
+typedef struct {
+ Dirt_Struct base;
+ float num_float;
+} Dirt_FloatStruct;
+
+typedef struct {
+ Dirt_Struct base;
+ long num_long;
+} Dirt_LongStruct;
+
+typedef struct {
+ Dirt_Struct base;
+ int num_int;
+} Dirt_IntStruct;
+
+typedef struct {
+ Dirt_Struct base;
+ Dirt_Struct **items;
+ size_t len;
+} Dirt_StructureStruct;
+
+typedef struct {
+ Dirt_Struct base;
+ Dirt_Struct *key;
+ Dirt_Struct *value;
+} Dirt_KeyvalueStruct;
 
 Dirt_StructType Dirt_StructType_Str;
 Dirt_StructType Dirt_StructType_UnicodeStr;

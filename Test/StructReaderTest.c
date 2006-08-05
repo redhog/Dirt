@@ -15,22 +15,22 @@
 void printStruct(Dirt_Struct *strct)
  {
   size_t pos;
-  if (strct->type == &Dirt_StructType_Str) printf("'''%*s'''", strct->str.len, strct->str.str);
-  else if (strct->type == &Dirt_StructType_UnicodeStr) printf("u'''%*s'''", strct->str.len, strct->str.str);
-  else if (strct->type == &Dirt_StructType_Identifier) printf("%*s", strct->str.len, strct->str.str);
-  else if (strct->type == &Dirt_StructType_Num_Float) printf("%f", strct->num_float);
-  else if (strct->type == &Dirt_StructType_Num_Long) printf("%l", strct->num_long);
-  else if (strct->type == &Dirt_StructType_Num_Int) printf("%i", strct->num_int);
+  if (strct->type == &Dirt_StructType_Str) printf("'''%*s'''", ((Dirt_StringStruct *) strct)->len, ((Dirt_StringStruct *) strct)->str);
+  else if (strct->type == &Dirt_StructType_UnicodeStr) printf("u'''%*s'''", ((Dirt_StringStruct *) strct)->len, ((Dirt_StringStruct *) strct)->str);
+  else if (strct->type == &Dirt_StructType_Identifier) printf("%*s", ((Dirt_StringStruct *) strct)->len, ((Dirt_StringStruct *) strct)->str);
+  else if (strct->type == &Dirt_StructType_Num_Float) printf("%f", ((Dirt_FloatStruct *) strct)->num_float);
+  else if (strct->type == &Dirt_StructType_Num_Long) printf("%l", ((Dirt_LongStruct *) strct)->num_long);
+  else if (strct->type == &Dirt_StructType_Num_Int) printf("%i", ((Dirt_IntStruct *) strct)->num_int);
   else if (strct->type == &Dirt_StructType_None) printf("None");
   else if (strct->type == &Dirt_StructType_False) printf("False");
   else if (strct->type == &Dirt_StructType_True) printf("True");
   else if (strct->type == &Dirt_StructType_Structure)
    {
     printf("Structure(");
-    for (pos = 0; pos < strct->structure.len; pos++)
+    for (pos = 0; pos < ((Dirt_StructureStruct *) strct)->len; pos++)
      {
-      printStruct(strct->structure.items[pos]);
-      if (pos < strct->structure.len - 1)
+      printStruct(((Dirt_StructureStruct *) strct)->items[pos]);
+      if (pos < ((Dirt_StructureStruct *) strct)->len - 1)
        printf(", ");
      }
     printf(")");
@@ -38,10 +38,10 @@ void printStruct(Dirt_Struct *strct)
   else if (strct->type == &Dirt_StructType_Structure_Tuple)
    {
     printf("(");
-    for (pos = 0; pos < strct->structure.len; pos++)
+    for (pos = 0; pos < ((Dirt_StructureStruct *) strct)->len; pos++)
      {
-      printStruct(strct->structure.items[pos]);
-      if (pos < strct->structure.len - 1)
+      printStruct(((Dirt_StructureStruct *) strct)->items[pos]);
+      if (pos < ((Dirt_StructureStruct *) strct)->len - 1)
        printf(", ");
      }
     printf(")");
@@ -49,10 +49,10 @@ void printStruct(Dirt_Struct *strct)
   else if (strct->type == &Dirt_StructType_Structure_List)
    {
     printf("[");
-    for (pos = 0; pos < strct->structure.len; pos++)
+    for (pos = 0; pos < ((Dirt_StructureStruct *) strct)->len; pos++)
      {
-      printStruct(strct->structure.items[pos]);
-      if (pos < strct->structure.len - 1)
+      printStruct(((Dirt_StructureStruct *) strct)->items[pos]);
+      if (pos < ((Dirt_StructureStruct *) strct)->len - 1)
        printf(", ");
      }
     printf("]");
@@ -60,10 +60,10 @@ void printStruct(Dirt_Struct *strct)
   else if (strct->type == &Dirt_StructType_Structure_Dictionary)
    {
     printf("{");
-    for (pos = 0; pos < strct->structure.len; pos++)
+    for (pos = 0; pos < ((Dirt_StructureStruct *) strct)->len; pos++)
      {
-      printStruct(strct->structure.items[pos]);
-      if (pos < strct->structure.len - 1)
+      printStruct(((Dirt_StructureStruct *) strct)->items[pos]);
+      if (pos < ((Dirt_StructureStruct *) strct)->len - 1)
        printf(", ");
      }
     printf("}");
@@ -71,40 +71,40 @@ void printStruct(Dirt_Struct *strct)
   else if (strct->type == &Dirt_StructType_Structure_Type)
    {
     printf("<");
-    for (pos = 0; pos < strct->structure.len; pos++)
+    for (pos = 0; pos < ((Dirt_StructureStruct *) strct)->len; pos++)
      {
-      printStruct(strct->structure.items[pos]);
-      if (pos < strct->structure.len - 1)
+      printStruct(((Dirt_StructureStruct *) strct)->items[pos]);
+      if (pos < ((Dirt_StructureStruct *) strct)->len - 1)
        printf(", ");
      }
     printf(">");
    }
   else if (strct->type == &Dirt_StructType_Keyvalue)
    {
-    printStruct(strct->keyvalue.key);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->key);
     printf(":");
-    printStruct(strct->keyvalue.value);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->value);
    } 
   else if (strct->type == &Dirt_StructType_Parameter)
    {
-    printStruct(strct->keyvalue.key);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->key);
     printf("=");
-    printStruct(strct->keyvalue.value);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->value);
    } 
   else if (strct->type == &Dirt_StructType_Member)
    {
-    printStruct(strct->keyvalue.key);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->key);
     printf(".");
-    printStruct(strct->keyvalue.value);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->value);
    }    
   else if (strct->type == &Dirt_StructType_Application)
    {
-    printStruct(strct->keyvalue.key);
+    printStruct(((Dirt_KeyvalueStruct *) strct)->key);
     printf("(");
-    for (pos = 0; pos < strct->keyvalue.value->structure.len; pos++)
+    for (pos = 0; pos < ((Dirt_StructureStruct*) ((Dirt_KeyvalueStruct *) strct)->value)->len; pos++)
      {
-      printStruct(strct->keyvalue.value->structure.items[pos]);
-      if (pos < strct->keyvalue.value->structure.len - 1)
+      printStruct(((Dirt_StructureStruct*) ((Dirt_KeyvalueStruct *) strct)->value)->items[pos]);
+      if (pos < ((Dirt_StructureStruct*) ((Dirt_KeyvalueStruct *) strct)->value)->len - 1)
        printf(", ");
      }
     printf(")");

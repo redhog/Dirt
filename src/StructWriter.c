@@ -7,17 +7,17 @@ char Dirt_StructWriter_write(Dirt_Writer *writer, void *any)
   Dirt_Struct *value = (Dirt_Struct *) any;
 
   if (value->type == &Dirt_StructType_Str)
-   return writer->type->str(writer, value->str.str, value->str.len);
+   return writer->type->str(writer, ((Dirt_StringStruct *) value)->str, ((Dirt_StringStruct *) value)->len);
   else if (value->type == &Dirt_StructType_UnicodeStr)
-   return writer->type->unicodeStr(writer, value->str.str, value->str.len);
+   return writer->type->unicodeStr(writer, ((Dirt_StringStruct *) value)->str, ((Dirt_StringStruct *) value)->len);
   else if (value->type == &Dirt_StructType_Identifier)
-   return writer->type->identifier(writer, value->str.str, value->str.len);
+   return writer->type->identifier(writer, ((Dirt_StringStruct *) value)->str, ((Dirt_StringStruct *) value)->len);
   else if (value->type == &Dirt_StructType_Num_Float)
-   return writer->type->num_float(writer, value->num_float);
+   return writer->type->num_float(writer, ((Dirt_FloatStruct *) value)->num_float);
   else if (value->type == &Dirt_StructType_Num_Long)
-   return writer->type->num_long(writer, value->num_long);
+   return writer->type->num_long(writer, ((Dirt_LongStruct *) value)->num_long);
   else if (value->type == &Dirt_StructType_Num_Int)
-   return writer->type->num_int(writer, value->num_int);
+   return writer->type->num_int(writer, ((Dirt_IntStruct *) value)->num_int);
   else if (value->type == &Dirt_StructType_None)
    return writer->type->none(writer);
   else if (value->type == &Dirt_StructType_False)
@@ -46,7 +46,7 @@ char Dirt_StructWriter_write(Dirt_Writer *writer, void *any)
  }
 
 typedef struct {
- Dirt_Struct *structure;
+ Dirt_StructureStruct *structure;
  off_t        pos;
 } Dirt_StructWriter_Iter;
 
@@ -55,7 +55,7 @@ void *Dirt_StructWriter_structure_open(Dirt_Writer *writer, void *structure)
   Dirt_StructWriter_Iter *iter;
 
   if (!(iter = (Dirt_StructWriter_Iter *) malloc(sizeof(Dirt_StructWriter_Iter)))) return NULL;
-  iter->structure = (Dirt_Struct *) structure;
+  iter->structure = (Dirt_StructureStruct *) structure;
   iter->pos = 0;
   return (void *) iter;
  }
@@ -64,7 +64,7 @@ char  Dirt_StructWriter_structure_end(Dirt_Writer *writer, void *iter)
  {
   Dirt_StructWriter_Iter *i = (Dirt_StructWriter_Iter *) iter;
 
-  return i->pos == i->structure->structure.len;
+  return i->pos == i->structure->len;
  }
 
 void *Dirt_StructWriter_structure_next(Dirt_Writer *writer, void *iter)
@@ -72,7 +72,7 @@ void *Dirt_StructWriter_structure_next(Dirt_Writer *writer, void *iter)
   Dirt_StructWriter_Iter *i = (Dirt_StructWriter_Iter *) iter;
   void *res;
 
-  res = (void *) i->structure->structure.items[i->pos];
+  res = (void *) i->structure->items[i->pos];
   i->pos++;
   return res;
  }
@@ -84,12 +84,12 @@ void Dirt_StructWriter_structure_close(Dirt_Writer *writer, void *iter)
 
 void *Dirt_StructWriter_keyvalue_key(Dirt_Writer *writer, void *keyvalue)
  {
-  return (void *) ((Dirt_Struct *) keyvalue)->keyvalue.key;
+  return (void *) ((Dirt_KeyvalueStruct *) keyvalue)->key;
  }
 
 void *Dirt_StructWriter_keyvalue_value(Dirt_Writer *writer, void *keyvalue)
  {
-  return (void *) ((Dirt_Struct *) keyvalue)->keyvalue.value;
+  return (void *) ((Dirt_KeyvalueStruct *) keyvalue)->value;
  }
 
 
