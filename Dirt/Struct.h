@@ -76,6 +76,14 @@ Dirt_StructType Dirt_StructType_Parameter;
 Dirt_StructType Dirt_StructType_Member;
 Dirt_StructType Dirt_StructType_Application;
 
+/* Note: All of these just returns NULL and decref:s all arguments if any of their arguments is NULL.
+   This means that you can safely do things like:
+   Dirt_Struct_structure_add(sess,
+    Dirt_Struct_structure_add(sess,
+     Dirt_Struct_structure(sess),
+     Dirt_Struct_str(sess, str, strl)),
+    Dirt_Struct_num_float(sess, 47.11));
+ */
 Dirt_Struct *Dirt_Struct_str(Dirt_Session *session, char *str, size_t len);
 Dirt_Struct *Dirt_Struct_unicodeStr(Dirt_Session *session, char *str, size_t len);
 Dirt_Struct *Dirt_Struct_identifier(Dirt_Session *session, char *str, size_t len);

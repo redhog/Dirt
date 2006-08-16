@@ -2,6 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+Dirt_Struct *Dirt_Struct_init_str(Dirt_Session *session, Dirt_StructType *type, char *str, size_t len);
+Dirt_Struct *Dirt_Struct_keyvalue_init(Dirt_Session *session, Dirt_StructType *type, Dirt_Struct *key, Dirt_Struct *value);
+
 void Dirt_Struct_decref(Dirt_Session *session, Dirt_Struct *item)
  {
   if (!--item->references)
@@ -119,7 +122,10 @@ Dirt_Struct *Dirt_Struct_init(Dirt_Session *session, Dirt_StructType *type)
 
 Dirt_Struct *Dirt_Struct_init_str(Dirt_Session *session, Dirt_StructType *type, char *str, size_t len)
  {
-  Dirt_Struct *strct; if (!(strct = Dirt_Struct_init(session, type))) return NULL;
+  Dirt_Struct *strct;
+  
+  if (!str) return NULL;
+  if (!(strct = Dirt_Struct_init(session, type))) return NULL;
   ((Dirt_StringStruct *) strct)->str = malloc(len);
   memcpy(((Dirt_StringStruct *) strct)->str, str, len);
   ((Dirt_StringStruct *) strct)->len = len;
@@ -171,6 +177,12 @@ Dirt_Struct *Dirt_Struct_structure_add(Dirt_Session *session, Dirt_Struct *struc
  {
   Dirt_StructureStruct *strct = (Dirt_StructureStruct *) structure;
   Dirt_Struct **items;
+  if (!structure || !item)
+   {
+    if (structure) structure->type->decref(session, structure);
+    if (item) item->type->decref(session, item);
+    return NULL;
+   }
   if (!(items = realloc(strct->items, sizeof(Dirt_Struct *) * (strct->len + 1))))
    {
     structure->type->decref(session, structure);
@@ -182,14 +194,21 @@ Dirt_Struct *Dirt_Struct_structure_add(Dirt_Session *session, Dirt_Struct *struc
   return structure;
  }
 
-Dirt_Struct *Dirt_Struct_structure_finalize_tuple(Dirt_Session *session, Dirt_Struct *structure) { structure->type = &Dirt_StructType_Structure_Tuple; return structure; }
-Dirt_Struct *Dirt_Struct_structure_finalize_list(Dirt_Session *session, Dirt_Struct *structure) { structure->type = &Dirt_StructType_Structure_List; return structure; }
-Dirt_Struct *Dirt_Struct_structure_finalize_dictionary(Dirt_Session *session, Dirt_Struct *structure) { structure->type = &Dirt_StructType_Structure_Dictionary; return structure; }
-Dirt_Struct *Dirt_Struct_structure_finalize_type(Dirt_Session *session, Dirt_Struct *structure) { structure->type = &Dirt_StructType_Structure_Type; return structure; }
+Dirt_Struct *Dirt_Struct_structure_finalize_tuple(Dirt_Session *session, Dirt_Struct *structure) { if (structure) structure->type = &Dirt_StructType_Structure_Tuple; return structure; }
+Dirt_Struct *Dirt_Struct_structure_finalize_list(Dirt_Session *session, Dirt_Struct *structure) { if (structure) structure->type = &Dirt_StructType_Structure_List; return structure; }
+Dirt_Struct *Dirt_Struct_structure_finalize_dictionary(Dirt_Session *session, Dirt_Struct *structure) { if (structure) structure->type = &Dirt_StructType_Structure_Dictionary; return structure; }
+Dirt_Struct *Dirt_Struct_structure_finalize_type(Dirt_Session *session, Dirt_Struct *structure) { if (structure) structure->type = &Dirt_StructType_Structure_Type; return structure; }
 
 Dirt_Struct *Dirt_Struct_keyvalue_init(Dirt_Session *session, Dirt_StructType *type, Dirt_Struct *key, Dirt_Struct *value)
  {
-  Dirt_Struct *strct; if (!(strct = Dirt_Struct_init(session, type))) return NULL;
+  Dirt_Struct *strct;
+  if (!key || !value)
+   {
+    if (key) key->type->decref(session, key);
+    if (value) value->type->decref(session, value);
+    return NULL;
+   }
+  if (!(strct = Dirt_Struct_init(session, type))) return NULL;
   ((Dirt_KeyvalueStruct *) strct)->key = key;
   ((Dirt_KeyvalueStruct *) strct)->value = value;
   return strct;
