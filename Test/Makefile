@@ -75,4 +75,4 @@ runStructReaderWriterTest: StructReaderWriterTest
 .PHONY: clean
 
 clean:
-	-rm *Test *.output *.o *~ core*
+	-rm -rf *Test *.output *.o *~ core*

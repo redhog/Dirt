@@ -104,7 +104,9 @@ Dirt_Struct *Dirt_Struct_parameter(Dirt_Session *session, Dirt_Struct *name, Dir
 Dirt_Struct *Dirt_Struct_member(Dirt_Session *session, Dirt_Struct *name, Dirt_Struct *value);
 Dirt_Struct *Dirt_Struct_application(Dirt_Session *session, Dirt_Struct *function, Dirt_Struct *parameters);
 
-Dirt_Struct *Dirt_Struct_structure_from_array(Dirt_Session *session, Dirt_Struct **item, size_t items);
-char         Dirt_Struct_structure_to_array(Dirt_Session *session, Dirt_Struct *structure, Dirt_Struct ***item, size_t *items);
+Dirt_Struct *Dirt_Struct_structure_add_array(Dirt_Session *session, Dirt_Struct *structure, Dirt_Struct **item, size_t items);
+Dirt_Struct *Dirt_Struct_structure_add_pairs(Dirt_Session *session, Dirt_Struct *structure, Dirt_StructType *type, char **name, Dirt_Struct **item, size_t items);
+char Dirt_Struct_structure_to_array(Dirt_Session *session, Dirt_Struct *structure, Dirt_Struct ***item, size_t *items);
+char Dirt_Struct_structure_to_pairs(Dirt_Session *session, Dirt_Struct *structure, Dirt_StructType **type, char ***name, Dirt_Struct ***item, size_t *items);
 
 #endif

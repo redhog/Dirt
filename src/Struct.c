@@ -219,32 +219,155 @@ Dirt_Struct *Dirt_Struct_parameter(Dirt_Session *session, Dirt_Struct *name, Dir
 Dirt_Struct *Dirt_Struct_member(Dirt_Session *session, Dirt_Struct *name, Dirt_Struct *value) { return Dirt_Struct_keyvalue_init(session, &Dirt_StructType_Member, name, value); }
 Dirt_Struct *Dirt_Struct_application(Dirt_Session *session, Dirt_Struct *function, Dirt_Struct *parameters) { return Dirt_Struct_keyvalue_init(session, &Dirt_StructType_Application, function, parameters); }
 
-Dirt_Struct *Dirt_Struct_structure_from_array(Dirt_Session *session, Dirt_Struct **item, size_t items)
+Dirt_Struct *Dirt_Struct_structure_add_array(Dirt_Session *session, Dirt_Struct *structure, Dirt_Struct **item, size_t items)
  {
-  size_t pos;
-  Dirt_Struct *res;
+  Dirt_StructureStruct *strct;
+  Dirt_Struct **strctitems;
 
-  res = Dirt_Struct_structure(session);
-  for (pos = 0; pos < items; pos++)
-   res = Dirt_Struct_structure_add(session, res, item[pos]);
-  return res;
+  if (!structure || !item)
+   {
+    if (structure) structure->type->decref(session, structure);
+    if (item)
+     for (;items;items--,item++)
+      (*item)->type->decref(session, *item);
+    return NULL;
+   }
+  strct = (Dirt_StructureStruct *) structure;
+  if (!(strctitems = realloc(strct->items, sizeof(Dirt_Struct *) * (strct->len + items))))
+   {
+    structure->type->decref(session, structure);
+    session->type->error(session, "Memory", "Out of memory when adding items to structure");
+    return NULL;
+   }
+  strct->items = strctitems;
+  memcpy((void *) (strct->items + strct->len), (void *) item, sizeof(Dirt_Struct *) * items);
+  strct->len += items;
+  return structure;
+ }
+
+Dirt_Struct *Dirt_Struct_structure_add_pairs(Dirt_Session *session, Dirt_Struct *structure, Dirt_StructType *type, char **name, Dirt_Struct **item, size_t items)
+ {
+  Dirt_StructureStruct *strct;
+  Dirt_Struct **strctitems;
+
+  if (!structure || !item)
+   {
+    if (structure) structure->type->decref(session, structure);
+    if (item)
+     for (;items;items--,item++)
+      (*item)->type->decref(session, *item);
+    return NULL;
+   }
+  strct = (Dirt_StructureStruct *) structure;
+  if (!(strctitems = realloc(strct->items, sizeof(Dirt_Struct *) * items)))
+   {
+    structure->type->decref(session, structure);
+    session->type->error(session, "Memory", "Out of memory when adding items to structure");
+    return NULL;
+   }
+  strct->items = strctitems;
+  for (strct->len = 0; strct->len < items; strct->len++)
+   if (!(strct->items[strct->len] = Dirt_Struct_keyvalue_init(session, type,
+							      Dirt_Struct_unicodeStr(session,
+										     name[strct->len],
+										     strlen(name[strct->len])),
+							      item[strct->len])))
+    {
+     structure->type->decref(session, structure);
+     return NULL;
+    }
+
+  return structure;
  }
 
 char Dirt_Struct_structure_to_array(Dirt_Session *session, Dirt_Struct *structure, Dirt_Struct ***item, size_t *items)
  {
   Dirt_StructureStruct *strct = (Dirt_StructureStruct *) structure;
-  ssize_t pos;
+  size_t pos;
 
-  if (!structure || !item || !items) return 0;
-  if (!(*item = malloc(sizeof(Dirt_Struct *) * strct->len))) return 0;
+  if (!structure || !item || !items)
+   {
+    if (structure) structure->type->decref(session, structure);
+    return 0;
+   }
+  if (!(*item = malloc(sizeof(Dirt_Struct *) * strct->len)))
+   {
+    structure->type->decref(session, structure);
+    return 0;
+   }
   *items = strct->len;
   for (pos = 0; pos < strct->len; pos++)
    if (!((*item)[pos] = strct->items[pos]->type->incref(session, strct->items[pos])))
     {
-     pos--;
-     for (; pos >= 0; pos--)
-      strct->items[pos]->type->decref(session, strct->items[pos]);
+     structure->type->decref(session, structure);
+     for (; pos > 0; pos--)
+      (*item)[pos-1]->type->decref(session, (*item)[pos-1]);
      return 0;
     }
   return 1;
+ }
+
+char Dirt_Struct_structure_to_pairs(Dirt_Session *session, Dirt_Struct *structure, Dirt_StructType **type, char ***name, Dirt_Struct ***item, size_t *items)
+ {
+  Dirt_StructureStruct *strct = (Dirt_StructureStruct *) structure;
+  Dirt_KeyvalueStruct *pair;
+  Dirt_StringStruct *key;
+  size_t pos;
+
+  if (!structure || !item || !items)
+   {
+    if (structure) structure->type->decref(session, structure);
+    return 0;
+   }
+  if (!(*item = malloc(sizeof(Dirt_Struct *) * strct->len)))
+   {
+    structure->type->decref(session, structure);
+    return 0;
+   }
+  if (!(*name = malloc(sizeof(char *) * strct->len)))
+   {
+    free(*item);
+    *item = NULL;
+    structure->type->decref(session, structure);
+    return 0;
+   }
+  *items = strct->len;
+  *type = NULL;
+  for (pos = 0; pos < strct->len; pos++)
+   {
+    if (!*type)
+     {
+      *type = strct->items[pos]->type;
+      if (   *type != &Dirt_StructType_Keyvalue
+	  && *type != &Dirt_StructType_Parameter
+	  && *type != &Dirt_StructType_Member
+	  && *type != &Dirt_StructType_Application)
+       goto Dirt_Struct_structure_to_pairs_failed;
+     }
+    pair = (Dirt_KeyvalueStruct *) strct->items[pos];
+    if (strct->items[pos]->type != *type
+        || (   pair->key->type != &Dirt_StructType_UnicodeStr
+	    && pair->key->type != &Dirt_StructType_Str))
+     goto Dirt_Struct_structure_to_pairs_failed;
+    key = (Dirt_StringStruct *) pair->key;
+    if (!((*name)[pos] = malloc(key->len + 1)))
+     goto Dirt_Struct_structure_to_pairs_failed;
+    memcpy((*name)[pos], key->str, key->len);
+    (*name)[pos][key->len] = '\0';
+    if (!((*item)[pos] = pair->value->type->incref(session, pair->value)))
+     {
+      free((*name)[pos]);
+      goto Dirt_Struct_structure_to_pairs_failed;
+     }
+
+   }
+  return 1;
+ Dirt_Struct_structure_to_pairs_failed:
+  structure->type->decref(session, structure);
+  for (; pos > 0; pos--)
+   {
+    free((*name)[pos-1]);
+    (*item)[pos-1]->type->decref(session, (*item)[pos-1]);
+   }
+  return 0;
  }

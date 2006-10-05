@@ -24,7 +24,7 @@ libDirt.so: libDirt.so.$(MAJOR)
 
 .PHONY: clean
 clean: test-clean
-	-rm *.so.* *.so *.o *~ core* src/*~ Dirt/*~
+	-rm -rf *.so.* *.so *.o *~ core* src/*~ Dirt/*~
 
 .PHONY: test
 test: libDirt.so
