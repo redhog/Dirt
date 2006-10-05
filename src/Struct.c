@@ -250,7 +250,7 @@ Dirt_Struct *Dirt_Struct_structure_add_pairs(Dirt_Session *session, Dirt_Struct 
   Dirt_StructureStruct *strct;
   Dirt_Struct **strctitems;
 
-  if (!structure || !item)
+  if (!structure || !name || !item)
    {
     if (structure) structure->type->decref(session, structure);
     if (item)
