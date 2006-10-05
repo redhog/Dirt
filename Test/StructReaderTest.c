@@ -19,7 +19,7 @@ void printStruct(Dirt_Struct *strct)
   else if (strct->type == &Dirt_StructType_UnicodeStr) printf("u'''%*s'''", ((Dirt_StringStruct *) strct)->len, ((Dirt_StringStruct *) strct)->str);
   else if (strct->type == &Dirt_StructType_Identifier) printf("%*s", ((Dirt_StringStruct *) strct)->len, ((Dirt_StringStruct *) strct)->str);
   else if (strct->type == &Dirt_StructType_Num_Float) printf("%f", ((Dirt_FloatStruct *) strct)->num_float);
-  else if (strct->type == &Dirt_StructType_Num_Long) printf("%l", ((Dirt_LongStruct *) strct)->num_long);
+  else if (strct->type == &Dirt_StructType_Num_Long) printf("%li", ((Dirt_LongStruct *) strct)->num_long);
   else if (strct->type == &Dirt_StructType_Num_Int) printf("%i", ((Dirt_IntStruct *) strct)->num_int);
   else if (strct->type == &Dirt_StructType_None) printf("None");
   else if (strct->type == &Dirt_StructType_False) printf("False");
@@ -111,7 +111,7 @@ void printStruct(Dirt_Struct *strct)
   }
  }
 
-int main(int argc, char argv[])
+int main(int argc, char **argv)
  {
   Dirt_Struct *strct;
   Dirt_FdBuffer fdbuffer;

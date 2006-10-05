@@ -9,17 +9,18 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define max(x, y) (x > y ? x : y)
 
-int main(int argc, char argv[])
+int main(int argc, char **argv)
  {
   Dirt_FdWriteBuffer fdbuffer;
   Dirt_WriteBuffer *buffer = (Dirt_WriteBuffer *) &fdbuffer;
   int fd[3];
 
   printf("Testing FileWriteBuffer\n");
-  if ((fd[0] = open("WriteBufferTest.output", O_WRONLY | O_CREAT)) < 0)
+  if ((fd[0] = open("WriteBufferTest.output", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
    {
     Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to open file");
     exit(1);
@@ -51,9 +52,9 @@ int main(int argc, char argv[])
     char dump[1024];
     ssize_t nr, wnr;
 
-    if ((fd[2] = open("WriteBufferTest.output", O_WRONLY | O_APPEND)) < 0)
+    if ((fd[2] = open("WriteBufferTest.output", O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR)) < 0)
      {
-      Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to open file");
+      Dirt_DebugSession.type->error(&Dirt_DebugSession, "I/O error", "Unable to open dump file");
       while (read(fd[0], dump, 1024) != 0);
       exit(1);
      }

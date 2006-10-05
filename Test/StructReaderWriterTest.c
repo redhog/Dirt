@@ -16,7 +16,7 @@
 #include <stdint.h>
 
 
-int main(int argc, char argv[])
+int main(int argc, char **argv)
  {
   Dirt_FdBuffer infdbuffer;
   Dirt_Buffer *inbuffer = (Dirt_Buffer *) &infdbuffer;
@@ -46,7 +46,7 @@ int main(int argc, char argv[])
     printf("Unable to initialize Reader");
     exit(1);
    }
-  if ((outfd = open("StructReaderWriterTest.output", O_WRONLY | O_CREAT)) < 0)
+  if ((outfd = open("StructReaderWriterTest.output", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
    {
     perror("Unable to open outputfile");
     exit(1);

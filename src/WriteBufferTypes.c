@@ -19,6 +19,7 @@ char Dirt_StringWriteBuffer_init(Dirt_WriteBuffer *buffer, Dirt_Session *session
  {
   if (!Dirt_WriteBuffer_init(buffer, &Dirt_StringWriteBufferType, session)) return 0;
   buffer->type = &Dirt_StringWriteBufferType;
+  return 1;
  }
 
 void Dirt_StringWriteBuffer_free(Dirt_WriteBuffer *buffer)
@@ -32,8 +33,6 @@ static char Dirt_StringWriteBuffer_adjust(Dirt_WriteBuffer *buffer)
  }
 
 Dirt_WriteBufferType Dirt_StringWriteBufferType = {
- NULL,
-
  Dirt_StringWriteBuffer_free,
 
  NULL,
@@ -90,8 +89,6 @@ char Dirt_FdWriteBuffer_write(Dirt_WriteBuffer *buffer, size_t nr)
  }
 
 Dirt_WriteBufferType Dirt_FdWriteBufferType = {
- NULL,
-
  &Dirt_FdWriteBuffer_free,
 
  NULL,

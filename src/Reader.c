@@ -1,6 +1,7 @@
 #include <Dirt/Reader.h>
 #include <Dirt/ReaderImplementor.h>
 #include <string.h>
+#include <stdlib.h>
 
 ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, char *dst)
  {
@@ -506,4 +507,5 @@ char Dirt_StandardReader_init(Dirt_Reader *reader, Dirt_Reader_Callbacks *callba
   reader->type = &Dirt_StandardReaderType;
   reader->callback = callbacks;
   reader->buffer = buffer;
+  return 1;
  }

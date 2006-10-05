@@ -57,8 +57,6 @@ char Dirt_WriteBuffer_advance(Dirt_WriteBuffer *buffer, size_t nr)
 
 char Dirt_WriteBuffer_extend(Dirt_WriteBuffer *buffer, size_t nr)
  {
-  ssize_t w;
-
   if (nr <= buffer->size)
    return 1;
   if (!buffer->type->adjust(buffer)) return 0;
@@ -69,7 +67,7 @@ char Dirt_WriteBuffer_extend(Dirt_WriteBuffer *buffer, size_t nr)
 
 char Dirt_WriteBuffer_init(Dirt_WriteBuffer *buffer, Dirt_WriteBufferType *type, Dirt_Session *session)
  {
-  uint maxsize = DIRT_WRITE_BUFFER_NEW_MAXSIZE;
+  size_t maxsize = DIRT_WRITE_BUFFER_NEW_MAXSIZE;
 # ifdef DEBUG_ALLOC
    fprintf(stderr, "Init: %p\n", (void *) buffer);
 # endif

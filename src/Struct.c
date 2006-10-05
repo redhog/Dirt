@@ -20,40 +20,40 @@ Dirt_Struct *Dirt_Struct_incref(Dirt_Session *session, Dirt_Struct *item)
 void Dirt_Struct_Str_free(Dirt_Session *session, Dirt_Struct *item)
  {
   free(((Dirt_StringStruct *) item)->str);
- };
+ }
 
 void Dirt_Struct_None_free(Dirt_Session *session, Dirt_Struct *item)
  {
- };
+ }
 
 void Dirt_Struct_Structure_free(Dirt_Session *session, Dirt_Struct *item)
  {
   size_t pos;
   for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
    ((Dirt_StructureStruct *) item)->items[pos]->type->decref(session, ((Dirt_StructureStruct *) item)->items[pos]);
- };
+ }
 
 void Dirt_Struct_Keyvalue_free(Dirt_Session *session, Dirt_Struct *item)
  {
   ((Dirt_KeyvalueStruct *) item)->key->type->decref(session, ((Dirt_KeyvalueStruct *) item)->key);
   ((Dirt_KeyvalueStruct *) item)->value->type->decref(session, ((Dirt_KeyvalueStruct *) item)->value);
- };
+ }
 
-Dirt_Struct *Dirt_Struct_restrict(Dirt_Session *session, Dirt_Struct *item)
+Dirt_Struct *Dirt_Struct_contract(Dirt_Session *session, Dirt_Struct *item)
  {
   return item->type->incref(session, item);
  }
 
-Dirt_Struct *Dirt_StructureStruct_restrict(Dirt_Session *session, Dirt_Struct *item)
+Dirt_Struct *Dirt_StructureStruct_contract(Dirt_Session *session, Dirt_Struct *item)
  {
-  Dirt_Struct *restrictedItems[((Dirt_StructureStruct *) item)->len];
+  Dirt_Struct *contractedItems[((Dirt_StructureStruct *) item)->len];
   char different = 0;
   size_t pos;
 
   for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
    {
-    restrictedItems[pos] = ((Dirt_StructureStruct *) item)->items[pos]->type->restrict(session, ((Dirt_StructureStruct *) item)->items[pos]);
-    if (restrictedItems[pos] != ((Dirt_StructureStruct *) item)->items[pos])
+    contractedItems[pos] = ((Dirt_StructureStruct *) item)->items[pos]->type->contract(session, ((Dirt_StructureStruct *) item)->items[pos]);
+    if (contractedItems[pos] != ((Dirt_StructureStruct *) item)->items[pos])
      different = 1;
    }
   if (different)
@@ -61,25 +61,25 @@ Dirt_Struct *Dirt_StructureStruct_restrict(Dirt_Session *session, Dirt_Struct *i
     Dirt_Struct *strct;
     strct = Dirt_Struct_structure(session);
     for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
-     strct = Dirt_Struct_structure_add(session, strct, restrictedItems[pos]);
+     strct = Dirt_Struct_structure_add(session, strct, contractedItems[pos]);
     strct->type = item->type;
     return strct;
    }
   else
    {
     for (pos = 0; pos < ((Dirt_StructureStruct *) item)->len; pos++)
-     restrictedItems[pos]->type->decref(session, restrictedItems[pos]);
+     contractedItems[pos]->type->decref(session, contractedItems[pos]);
     return item->type->incref(session, item);
    }
  }
 
-Dirt_Struct *Dirt_KeyvalueStruct_restrict(Dirt_Session *session, Dirt_Struct *item)
+Dirt_Struct *Dirt_KeyvalueStruct_contract(Dirt_Session *session, Dirt_Struct *item)
  {
   Dirt_Struct *key;
   Dirt_Struct *value;
 
-  key = ((Dirt_KeyvalueStruct *) item)->key->type->restrict(session, ((Dirt_KeyvalueStruct *) item)->key);
-  value = ((Dirt_KeyvalueStruct *) item)->value->type->restrict(session, ((Dirt_KeyvalueStruct *) item)->value);
+  key = ((Dirt_KeyvalueStruct *) item)->key->type->contract(session, ((Dirt_KeyvalueStruct *) item)->key);
+  value = ((Dirt_KeyvalueStruct *) item)->value->type->contract(session, ((Dirt_KeyvalueStruct *) item)->value);
 
   if (key != ((Dirt_KeyvalueStruct *) item)->key || value != ((Dirt_KeyvalueStruct *) item)->value)
    return Dirt_Struct_keyvalue_init(session, item->type, key, value);
@@ -91,24 +91,24 @@ Dirt_Struct *Dirt_KeyvalueStruct_restrict(Dirt_Session *session, Dirt_Struct *it
    }
  }
 
-Dirt_StructType Dirt_StructType_Str = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_UnicodeStr = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_Identifier = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_Num_Float = { sizeof(Dirt_FloatStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_Num_Long = { sizeof(Dirt_LongStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_Num_Int = { sizeof(Dirt_IntStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_None = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_False = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_True = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_restrict };
-Dirt_StructType Dirt_StructType_Structure = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
-Dirt_StructType Dirt_StructType_Structure_Tuple = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
-Dirt_StructType Dirt_StructType_Structure_List = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
-Dirt_StructType Dirt_StructType_Structure_Dictionary = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
-Dirt_StructType Dirt_StructType_Structure_Type = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_restrict };
-Dirt_StructType Dirt_StructType_Keyvalue = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
-Dirt_StructType Dirt_StructType_Parameter = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
-Dirt_StructType Dirt_StructType_Member = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
-Dirt_StructType Dirt_StructType_Application = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_restrict };
+Dirt_StructType Dirt_StructType_Str = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_UnicodeStr = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_Identifier = { sizeof(Dirt_StringStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Str_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_Num_Float = { sizeof(Dirt_FloatStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_Num_Long = { sizeof(Dirt_LongStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_Num_Int = { sizeof(Dirt_IntStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_None = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_False = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_True = { sizeof(Dirt_Struct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_None_free, Dirt_Struct_contract };
+Dirt_StructType Dirt_StructType_Structure = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_contract };
+Dirt_StructType Dirt_StructType_Structure_Tuple = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_contract };
+Dirt_StructType Dirt_StructType_Structure_List = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_contract };
+Dirt_StructType Dirt_StructType_Structure_Dictionary = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_contract };
+Dirt_StructType Dirt_StructType_Structure_Type = { sizeof(Dirt_StructureStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Structure_free, Dirt_StructureStruct_contract };
+Dirt_StructType Dirt_StructType_Keyvalue = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_contract };
+Dirt_StructType Dirt_StructType_Parameter = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_contract };
+Dirt_StructType Dirt_StructType_Member = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_contract };
+Dirt_StructType Dirt_StructType_Application = { sizeof(Dirt_KeyvalueStruct), Dirt_Struct_decref, Dirt_Struct_incref, Dirt_Struct_Keyvalue_free, Dirt_KeyvalueStruct_contract };
 
 
 Dirt_Struct *Dirt_Struct_init(Dirt_Session *session, Dirt_StructType *type)
@@ -130,11 +130,11 @@ Dirt_Struct *Dirt_Struct_init_str(Dirt_Session *session, Dirt_StructType *type, 
   memcpy(((Dirt_StringStruct *) strct)->str, str, len);
   ((Dirt_StringStruct *) strct)->len = len;
   return strct;
- };
+ }
 
-Dirt_Struct *Dirt_Struct_str(Dirt_Session *session, char *str, size_t len) { return Dirt_Struct_init_str(session, &Dirt_StructType_Str, str, len); };
-Dirt_Struct *Dirt_Struct_unicodeStr(Dirt_Session *session, char *str, size_t len) { return Dirt_Struct_init_str(session, &Dirt_StructType_UnicodeStr, str, len); };
-Dirt_Struct *Dirt_Struct_identifier(Dirt_Session *session, char *str, size_t len) { return Dirt_Struct_init_str(session, &Dirt_StructType_Identifier, str, len); };
+Dirt_Struct *Dirt_Struct_str(Dirt_Session *session, char *str, size_t len) { return Dirt_Struct_init_str(session, &Dirt_StructType_Str, str, len); }
+Dirt_Struct *Dirt_Struct_unicodeStr(Dirt_Session *session, char *str, size_t len) { return Dirt_Struct_init_str(session, &Dirt_StructType_UnicodeStr, str, len); }
+Dirt_Struct *Dirt_Struct_identifier(Dirt_Session *session, char *str, size_t len) { return Dirt_Struct_init_str(session, &Dirt_StructType_Identifier, str, len); }
 
 Dirt_Struct *Dirt_Struct_num_float(Dirt_Session *session, float real)
  {
@@ -142,7 +142,7 @@ Dirt_Struct *Dirt_Struct_num_float(Dirt_Session *session, float real)
   if (!(strct = Dirt_Struct_init(session, &Dirt_StructType_Num_Float))) return NULL;
   ((Dirt_FloatStruct *) strct)->num_float = real;
   return strct;
- };
+ }
 
 Dirt_Struct *Dirt_Struct_num_long(Dirt_Session *session, long integer)
  {
@@ -150,7 +150,7 @@ Dirt_Struct *Dirt_Struct_num_long(Dirt_Session *session, long integer)
   if (!(strct = Dirt_Struct_init(session, &Dirt_StructType_Num_Long))) return NULL;
   ((Dirt_LongStruct *) strct)->num_long = integer;
   return strct;
- };
+ }
 
 Dirt_Struct *Dirt_Struct_num_int(Dirt_Session *session, int integer)
  {
@@ -158,11 +158,11 @@ Dirt_Struct *Dirt_Struct_num_int(Dirt_Session *session, int integer)
   if (!(strct = Dirt_Struct_init(session, &Dirt_StructType_Num_Int))) return NULL;
   ((Dirt_IntStruct *) strct)->num_int = integer;
   return strct;
- };
+ }
 
-Dirt_Struct *Dirt_Struct_none(Dirt_Session *session) { return Dirt_Struct_init(session, &Dirt_StructType_None); };
-Dirt_Struct *Dirt_Struct_false(Dirt_Session *session) { return Dirt_Struct_init(session, &Dirt_StructType_False); };
-Dirt_Struct *Dirt_Struct_true(Dirt_Session *session) { return Dirt_Struct_init(session, &Dirt_StructType_True); };
+Dirt_Struct *Dirt_Struct_none(Dirt_Session *session) { return Dirt_Struct_init(session, &Dirt_StructType_None); }
+Dirt_Struct *Dirt_Struct_false(Dirt_Session *session) { return Dirt_Struct_init(session, &Dirt_StructType_False); }
+Dirt_Struct *Dirt_Struct_true(Dirt_Session *session) { return Dirt_Struct_init(session, &Dirt_StructType_True); }
 
 Dirt_Struct *Dirt_Struct_structure(Dirt_Session *session)
  {
@@ -171,7 +171,7 @@ Dirt_Struct *Dirt_Struct_structure(Dirt_Session *session)
   ((Dirt_StructureStruct *) strct)->items = NULL;
   ((Dirt_StructureStruct *) strct)->len = 0;
   return strct;
- };
+ }
 
 Dirt_Struct *Dirt_Struct_structure_add(Dirt_Session *session, Dirt_Struct *structure, Dirt_Struct *item)
  {
@@ -212,7 +212,7 @@ Dirt_Struct *Dirt_Struct_keyvalue_init(Dirt_Session *session, Dirt_StructType *t
   ((Dirt_KeyvalueStruct *) strct)->key = key;
   ((Dirt_KeyvalueStruct *) strct)->value = value;
   return strct;
- };
+ }
 
 Dirt_Struct *Dirt_Struct_keyvalue(Dirt_Session *session, Dirt_Struct *key, Dirt_Struct *value) { return Dirt_Struct_keyvalue_init(session, &Dirt_StructType_Keyvalue, key, value); }
 Dirt_Struct *Dirt_Struct_parameter(Dirt_Session *session, Dirt_Struct *name, Dirt_Struct *value) { return Dirt_Struct_keyvalue_init(session, &Dirt_StructType_Parameter, name, value); }

@@ -50,8 +50,6 @@ typedef char (*Dirt_WriteBuffer_Extend)(Dirt_WriteBuffer *WriteBuffer, size_t nr
 
 struct  Dirt_WriteBufferTypeT
  {
-  Dirt_Session session;
-
   Dirt_WriteBuffer_Free free;
 
   Dirt_WriteBuffer_Release release;

@@ -123,11 +123,11 @@ char Dirt_Writer_num_long(Dirt_Writer *writer, long integer)
  {
   size_t numlen;
 
-  numlen = snprintf(NULL, 0, "%l", integer);
+  numlen = snprintf(NULL, 0, "%li", integer);
 
   /* + 1 since snprintf will want to output a superflous \0 at the end... */
   if (!writer->buffer->type->extend(writer->buffer, numlen + 1)) return 0;
-  snprintf(writer->buffer->buf + writer->buffer->pos, numlen + 1, "%l", integer);
+  snprintf(writer->buffer->buf + writer->buffer->pos, numlen + 1, "%li", integer);
   if (!writer->buffer->type->advance(writer->buffer, numlen)) return 0;
   return 1;
  }
@@ -251,4 +251,5 @@ char Dirt_StandardWriter_init(Dirt_Writer *writer, Dirt_Writer_Callbacks *callba
   writer->type = &Dirt_StandardWriterType;
   writer->callback = callbacks;
   writer->buffer = buffer;
+  return 1;
  }

@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
 
 /****************************************************************
@@ -19,6 +20,7 @@ char Dirt_StringBuffer_init(Dirt_Buffer *buffer, Dirt_Session *session, char *st
   buffer->type = &Dirt_StringBufferType;
   buffer->buf = string;
   buffer->len = buffer->size = strlen(string);
+  return 1;
  }
 
 static char Dirt_StringBuffer_extend(Dirt_Buffer *buffer, size_t nr)

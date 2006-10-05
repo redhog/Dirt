@@ -96,7 +96,7 @@ char Dirt_Buffer_extend(Dirt_Buffer *buffer, size_t nr)
 
 char Dirt_Buffer_init(Dirt_Buffer *buffer, Dirt_BufferType *type, Dirt_Session *session)
  {
-  uint maxsize = DIRT_BUFFER_NEW_MAXSIZE;
+  size_t maxsize = DIRT_BUFFER_NEW_MAXSIZE;
 # ifdef DEBUG_ALLOC
    fprintf(stderr, "Init: %p\n", (void *) buffer);
 # endif

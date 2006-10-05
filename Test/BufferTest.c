@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define max(x, y) (x > y ? x : y)
 
@@ -23,7 +24,7 @@ void assertBuffer(Dirt_Buffer *buffer, char *string)
    }
  }
 
-int main(int argc, char argv[])
+int main(int argc, char **argv)
  {
   Dirt_FdBuffer fdbuffer;
   Dirt_Buffer *buffer = (Dirt_Buffer *) &fdbuffer;

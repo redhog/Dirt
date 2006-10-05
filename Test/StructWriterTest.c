@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <string.h>
 
-int main(int argc, char argv[])
+int main(int argc, char **argv)
  {
   Dirt_FdWriteBuffer fdbuffer;
   Dirt_WriteBuffer *buffer = (Dirt_WriteBuffer *) &fdbuffer;
@@ -19,7 +19,7 @@ int main(int argc, char argv[])
   Dirt_Struct *a, *b, *c;
   int fd;
 
-  if ((fd = open("StructWriterTest.output", O_WRONLY | O_CREAT)) < 0)
+  if ((fd = open("StructWriterTest.output", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
    {
     perror("Unable to open file");
     exit(1);

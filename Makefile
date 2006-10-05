@@ -1,6 +1,6 @@
 export INSTALLDIR=/usr/local
 
-export CFLAGS:=-g
+export CFLAGS:=-g -Wall -pedantic-errors -std=gnu99
 export LIBS:=
 export CC:=gcc
 

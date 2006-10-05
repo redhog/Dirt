@@ -1,4 +1,4 @@
-export CFLAGS:=-I../ -g
+export CFLAGS:=-I../ -g -Wall -pedantic-errors -std=gnu99
 export LIBS:=-L../ -lDirt
 export CC:=gcc
 export LD_LIBRARY_PATH:=$(shell cd ..; pwd)

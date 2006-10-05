@@ -11,13 +11,13 @@
 
 int listlen = 1;
 
-char  WriterTest_write(Dirt_Writer *writer, void *any) { listlen *= 2; return writer->type->num_int(writer, listlen); };
-void *WriterTest_structure_open(Dirt_Writer *writer, void *structure) { return (void *) 1; };
-char  WriterTest_structure_end(Dirt_Writer *writer, void *iter) { return listlen >= 10000; };
-void *WriterTest_structure_next(Dirt_Writer *writer, void *iter) { return (void *) 1; };
-void  WriterTest_structure_close(Dirt_Writer *writer, void *iter) { };
-void *WriterTest_keyvalue_key(Dirt_Writer *writer, void *keyvalue) { return 0; };
-void *WriterTest_keyvalue_value(Dirt_Writer *writer, void *keyvalue) { return 0; };
+char  WriterTest_write(Dirt_Writer *writer, void *any) { listlen *= 2; return writer->type->num_int(writer, listlen); }
+void *WriterTest_structure_open(Dirt_Writer *writer, void *structure) { return (void *) 1; }
+char  WriterTest_structure_end(Dirt_Writer *writer, void *iter) { return listlen >= 10000; }
+void *WriterTest_structure_next(Dirt_Writer *writer, void *iter) { return (void *) 1; }
+void  WriterTest_structure_close(Dirt_Writer *writer, void *iter) { }
+void *WriterTest_keyvalue_key(Dirt_Writer *writer, void *keyvalue) { return 0; }
+void *WriterTest_keyvalue_value(Dirt_Writer *writer, void *keyvalue) { return 0; }
 
 Dirt_Writer_Callbacks callbacks = {
  WriterTest_write,
@@ -29,14 +29,14 @@ Dirt_Writer_Callbacks callbacks = {
  WriterTest_keyvalue_value
 };
 
-int main(int argc, char argv[])
+int main(int argc, char **argv)
  {
   Dirt_FdWriteBuffer fdbuffer;
   Dirt_WriteBuffer *buffer = (Dirt_WriteBuffer *) &fdbuffer;
   Dirt_Writer writer;
   int fd;
 
-  if ((fd = open("WriterTest.output", O_WRONLY | O_CREAT)) < 0)
+  if ((fd = open("WriterTest.output", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
    {
     perror("Unable to open file");
     exit(1);
