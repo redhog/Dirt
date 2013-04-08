@@ -1,17 +1,7 @@
-#include "Reader.h"
+#include <Dirt/Reader.h>
+#include <Dirt/ReaderImplementor.h>
 #include <string.h>
-
-
-#define NEWLINE '\n': case '\r'
-#define SPACE '\t': case '\x0b': case '\x0c': case ' '
-#define WHITESPACE NEWLINE: case SPACE
-#define DIGITS '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9'
-#define NUMBERLEADCHARS DIGITS: case '+': case '-'
-#define NUMBERCHARS NUMBERLEADCHARS: case '.'
-#define KNOWNBEGINSEPARATORS '<': case '{': case '['
-#define BEGINSEPARATORS KNOWNBEGINSEPARATORS: case '('
-#define ENDSEPARATORS ')': case ']': case '}': case '>'
-#define SEPARATORS ',': case ':': case '=': case BEGINSEPARATORS: case ENDSEPARATORS
+#include <stdlib.h>
 
 ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, char *dst)
  {
@@ -39,7 +29,7 @@ ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, c
        memcpy(name, reader->buffer->buf + reader->buffer->pos + namestart, namelen);
        name[namelen] = '\0';
        p++; /* skip '}' */
-       len = reader->callback->unicodeLookupName(reader, name, dst);
+       len = reader->buffer->session->type->unicodeLookupName(reader->buffer->session, name, dst);
       }
      }
      break;
@@ -52,7 +42,7 @@ ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, c
       num[4] = '\0';
       p += 4;
 
-      len = reader->callback->unicodeLookupOrdinal(reader, (int) strtol(num, NULL, 16), dst);      
+      len = reader->buffer->session->type->unicodeLookupOrdinal(reader->buffer->session, (int) strtol(num, NULL, 16), dst);      
      }
      break;
     case 'U':
@@ -64,7 +54,7 @@ ssize_t Dirt_Reader_readStr_readUnicodeescape(Dirt_Reader *reader, off_t *pos, c
       num[8] = '\0';
       p += 8;
 
-      len = reader->callback->unicodeLookupOrdinal(reader, (int) strtol(num, NULL, 16), dst);
+      len = reader->buffer->session->type->unicodeLookupOrdinal(reader->buffer->session, (int) strtol(num, NULL, 16), dst);
      }
      break;
     default:
@@ -517,4 +507,5 @@ char Dirt_StandardReader_init(Dirt_Reader *reader, Dirt_Reader_Callbacks *callba
   reader->type = &Dirt_StandardReaderType;
   reader->callback = callbacks;
   reader->buffer = buffer;
+  return 1;
  }

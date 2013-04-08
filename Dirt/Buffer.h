@@ -23,10 +23,10 @@
 #ifndef DIRT_BUFFER_H
 #define DIRT_BUFFER_H
 
-#include "Session.h"
+#include <Dirt/Session.h>
 #include <sys/types.h>
 
-#define NEWREADER_BUFFER_MAXSIZE 8192
+#define DIRT_BUFFER_NEW_MAXSIZE 8192
 
 extern char Dirt_Buffer_Error_IO[];
 
@@ -39,26 +39,18 @@ typedef struct Dirt_BufferTypeT Dirt_BufferType;
    released.
 */
 
-typedef void    (*Dirt_Buffer_Release)(Dirt_Buffer *buffer); /* +buf */
-typedef void    (*Dirt_Buffer_Lock)(Dirt_Buffer *buffer); /* -buf */
-  char *buf;
-  off_t pos;
-  size_t len;
-  size_t size;
-  size_t maxsize;
-
+typedef void    (*Dirt_Buffer_Free)(Dirt_Buffer *buffer); /* +buf */
 typedef char    (*Dirt_Buffer_Advance)(Dirt_Buffer *buffer, size_t nr); /* +buf */
 typedef char    (*Dirt_Buffer_Cut)(Dirt_Buffer *buffer, char *dst, size_t nr); /* +buf */
 typedef char    (*Dirt_Buffer_Contains)(Dirt_Buffer *buffer, char *buf, size_t len, size_t at); /* +buf */
 typedef ssize_t (*Dirt_Buffer_Read)(Dirt_Buffer *buffer, size_t nr); /* +buf */
 typedef char    (*Dirt_Buffer_Extend)(Dirt_Buffer *buffer, size_t nr); /* +buf */
 
-struct  Dirt_BufferTypeT
+struct Dirt_BufferTypeT
  {
-  Dirt_Session session;
+  Dirt_Session *session;
 
-  Dirt_Buffer_Release release;
-  Dirt_Buffer_Lock lock;
+  Dirt_Buffer_Free free;
 
   Dirt_Buffer_Advance advance;
   Dirt_Buffer_Cut cut;

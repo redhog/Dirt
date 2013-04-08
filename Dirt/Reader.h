@@ -1,11 +1,9 @@
-#include "Buffer.h"
 #ifndef DIRT_READER
 #define DIRT_READER
+#include <Dirt/Buffer.h>
 
 typedef struct Dirt_ReaderT Dirt_Reader;
 
-typedef size_t   (*Dirt_Reader_UnicodeLookupName)(Dirt_Reader *reader, char *name, char *dst);
-typedef size_t   (*Dirt_Reader_UnicodeLookupOrdinal)(Dirt_Reader *reader, int ordinal, char *dst);
 typedef void     (*Dirt_Reader_Free)(Dirt_Reader *reader, void *item);
 typedef void    *(*Dirt_Reader_Str)(Dirt_Reader *reader, char *str, size_t len);
 typedef void    *(*Dirt_Reader_UnicodeStr)(Dirt_Reader *reader, char *str, size_t len);
@@ -28,8 +26,6 @@ typedef void    *(*Dirt_Reader_Member)(Dirt_Reader *reader, void *name, void *va
 typedef void    *(*Dirt_Reader_Application)(Dirt_Reader *reader, void *function, void *parameters);
 
 typedef struct {
- Dirt_Reader_UnicodeLookupName                unicodeLookupName;
- Dirt_Reader_UnicodeLookupOrdinal             unicodeLookupOrdinal;
  Dirt_Reader_Free                             free;
  Dirt_Reader_Str                              str;
  Dirt_Reader_UnicodeStr                       unicodeStr;

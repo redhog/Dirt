@@ -1,9 +1,11 @@
-#include "BufferTypes.h"
-#include "BufferImplementor.h"
+#include <Dirt/BufferTypes.h>
+#include <Dirt/BufferImplementor.h>
+#include <Dirt/Utils.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/socket.h>
 
 
 /****************************************************************
@@ -18,6 +20,7 @@ char Dirt_StringBuffer_init(Dirt_Buffer *buffer, Dirt_Session *session, char *st
   buffer->type = &Dirt_StringBufferType;
   buffer->buf = string;
   buffer->len = buffer->size = strlen(string);
+  return 1;
  }
 
 static char Dirt_StringBuffer_extend(Dirt_Buffer *buffer, size_t nr)
@@ -33,7 +36,6 @@ Dirt_BufferType Dirt_StringBufferType = {
  NULL,
 
  NULL,
- NULL,
 
  &Dirt_Buffer_advance,
  &Dirt_Buffer_cut,
@@ -47,10 +49,10 @@ Dirt_BufferType Dirt_StringBufferType = {
  FdBuffer
  ****************************************************************/
 
-void Dirt_FdBuffer_release(Dirt_Buffer *buffer)
+void Dirt_FdBuffer_free(Dirt_Buffer *buffer)
  {
   close(((Dirt_FdBuffer *) buffer)->fd);
-  Dirt_Buffer_release(buffer);
+  Dirt_Buffer_free(buffer);
  }
 
 
@@ -101,8 +103,7 @@ ssize_t Dirt_SocketBuffer_read(Dirt_Buffer *buffer, size_t nr)
 Dirt_BufferType Dirt_SocketBufferType = {
  NULL,
 
- &Dirt_FdBuffer_release,
- NULL,
+ &Dirt_FdBuffer_free,
 
  &Dirt_Buffer_advance,
  &Dirt_Buffer_cut,
@@ -135,8 +136,7 @@ ssize_t Dirt_FileBuffer_read(Dirt_Buffer *buffer, size_t nr)
 Dirt_BufferType Dirt_FileBufferType = {
  NULL,
 
- &Dirt_FdBuffer_release,
- NULL,
+ &Dirt_FdBuffer_free,
 
  &Dirt_Buffer_advance,
  &Dirt_Buffer_cut,

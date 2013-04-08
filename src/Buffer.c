@@ -1,4 +1,5 @@
-#include "BufferImplementor.h"
+#include <Dirt/BufferImplementor.h>
+#include <Dirt/Utils.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -19,7 +20,7 @@ char Dirt_Buffer_Error_IO[] = "I/O error";
 
 /* Generic implementations */
 
-void Dirt_Buffer_release(Dirt_Buffer *buffer)
+void Dirt_Buffer_free(Dirt_Buffer *buffer)
  {
   free(buffer->buf);
  }
@@ -95,7 +96,7 @@ char Dirt_Buffer_extend(Dirt_Buffer *buffer, size_t nr)
 
 char Dirt_Buffer_init(Dirt_Buffer *buffer, Dirt_BufferType *type, Dirt_Session *session)
  {
-  uint maxsize = NEWREADER_BUFFER_MAXSIZE;
+  size_t maxsize = DIRT_BUFFER_NEW_MAXSIZE;
 # ifdef DEBUG_ALLOC
    fprintf(stderr, "Init: %p\n", (void *) buffer);
 # endif
@@ -106,12 +107,6 @@ char Dirt_Buffer_init(Dirt_Buffer *buffer, Dirt_BufferType *type, Dirt_Session *
   buffer->maxsize = maxsize;
   buffer->type = type;
   buffer->session = session;
-# ifdef WITH_THREAD
-#  ifdef DEBUG_THREAD
-    buffer->interplockings = 0;
-    buffer->bufferlockings = 0;
-#  endif
-# endif
 # ifdef DEBUG_ALLOC
    fprintf(stderr, "Init done: %p\n", (void *) buffer);
 # endif

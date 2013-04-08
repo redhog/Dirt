@@ -1,4 +1,4 @@
-#include "Session.h"
+#include <Dirt/Session.h>
 #include <stdio.h>
 
 void Dirt_DebugSession_error(Dirt_Session *session, char *class, char *error)
@@ -11,7 +11,7 @@ void Dirt_SilentSession_error(Dirt_Session *session, char *class, char *error)
  {
  }
 
-Dirt_SessionType Dirt_DebugSessionType = { &Dirt_DebugSession_error };
+Dirt_SessionType Dirt_DebugSessionType = { &Dirt_DebugSession_error, NULL, NULL };
 Dirt_Session Dirt_DebugSession = { &Dirt_DebugSessionType };
-Dirt_SessionType Dirt_SilentSessionType = { &Dirt_SilentSession_error };
+Dirt_SessionType Dirt_SilentSessionType = { &Dirt_SilentSession_error, NULL, NULL };
 Dirt_Session Dirt_SilentSession = { &Dirt_SilentSessionType };
